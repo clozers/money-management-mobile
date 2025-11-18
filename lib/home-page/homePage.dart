@@ -340,6 +340,86 @@ class _HomePageState extends State<HomePage> {
 
                           const SizedBox(height: 24),
 
+                          // ================= Quick Action Card =================
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Color(0xFF0E8F6A).withOpacity(0.1),
+                                    Color(0xFF14B885).withOpacity(0.1),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: Color(0xFF0E8F6A).withOpacity(0.2),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Color(0xFF0E8F6A).withOpacity(0.15),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: const Icon(
+                                      Icons.scanner,
+                                      color: Color(0xFF0E8F6A),
+                                      size: 24,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Scan Struk Otomatis',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          'Upload foto struk untuk deteksi otomatis',
+                                          style: TextStyle(
+                                            color: Colors.grey[600],
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  ElevatedButton.icon(
+                                    onPressed: () => Navigator.pushNamed(
+                                        context, '/scan-struk'),
+                                    icon:
+                                        const Icon(Icons.camera_alt, size: 18),
+                                    label: const Text('Scan'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Color(0xFF0E8F6A),
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 10),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 24),
+
                           // ================= Transaksi Section =================
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),

@@ -45,5 +45,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Kami membutuhkan akses kamera untuk mengambil foto struk</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Kami membutuhkan akses galeri untuk memilih foto struk</string>
 </dict>
 </plist>

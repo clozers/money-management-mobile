@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as path;
 
 class ApiService {
   static const String baseUrl = 'https://brightfuture.my.id/api';
@@ -116,6 +118,49 @@ class ApiService {
     } else {
       print('Transaksi error: ${response.body}');
       return [];
+    }
+  }
+
+  // 📸 SCAN TRANSAKSI (Upload Struk)
+  static Future<Map<String, dynamic>?> scanTransaksi(
+      String token, File imageFile) async {
+    try {
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('$baseUrl/scan-transaksi'),
+      );
+
+      // Add headers
+      request.headers.addAll({
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      });
+
+      // Add file
+      var multipartFile = await http.MultipartFile.fromPath(
+        'nota',
+        imageFile.path,
+        filename: path.basename(imageFile.path),
+      );
+      request.files.add(multipartFile);
+
+      print('Scan transaksi: Uploading file ${imageFile.path}');
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+      print('Scan transaksi response status: ${response.statusCode}');
+      print('Scan transaksi response body: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return jsonDecode(response.body);
+      } else {
+        print('Scan transaksi error: ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Scan transaksi exception: $e');
+      return null;
     }
   }
 }

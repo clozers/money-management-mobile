@@ -5,6 +5,7 @@ import 'auth/registerPage.dart';
 import 'home-page/homePage.dart';
 import 'akun-page/akunPage.dart';
 import 'pengeluaran-page/pengeluaran_page.dart';
+import 'scan-struk-page/scan_struk_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => HomePage(),
         '/akun': (context) => const AccountPage(),
         '/pengeluaran': (context) => const PengeluaranPage(),
+        '/scan-struk': (context) => const ScanStrukPage(),
       },
     );
   }
