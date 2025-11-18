@@ -8,6 +8,7 @@ import 'pengeluaran-page/pengeluaran_page.dart';
 import 'scan-struk-page/scan_struk_page.dart';
 import 'tambah-transaksi-page/tambah_transaksi_page.dart';
 import 'detail-transaksi-page/detail_transaksi_page.dart';
+import 'detail-profil-page/detail_profil_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
             transaksiId: args?['id']?.toString() ?? '',
           );
         },
+        '/detail-profil': (context) => const DetailProfilPage(),
       },
     );
   }

@@ -89,181 +89,128 @@ class _AccountPageState extends State<AccountPage> {
                   onRefresh: loadData,
                   child: CustomScrollView(
                     slivers: [
-                      // Header dengan profile
+                      // Header dengan profile (tanpa background hijau)
                       SliverToBoxAdapter(
                         child: Container(
-                          height: 240,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                const Color(0xFF0E8F6A),
-                                const Color(0xFF14B885),
-                                const Color(0xFF1AD9A0),
-                              ],
-                            ),
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(30),
-                              bottomRight: Radius.circular(30),
-                            ),
-                          ),
-                          child: Stack(
-                            clipBehavior: Clip.none,
+                          padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
+                          color: Colors.white,
+                          child: Row(
                             children: [
-                              // Dekorasi lingkaran
-                              Positioned(
-                                top: -50,
-                                right: -50,
-                                child: Container(
-                                  width: 150,
-                                  height: 150,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white.withOpacity(0.1),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                top: 80,
-                                left: -30,
-                                child: Container(
-                                  width: 100,
-                                  height: 100,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white.withOpacity(0.08),
-                                  ),
-                                ),
-                              ),
-                              // Content
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(20, 40, 20, 30),
-                                child: Row(
-                                  children: [
-                                    // Avatar dengan border
-                                    Stack(
-                                      children: [
-                                        Container(
-                                          width: 90,
-                                          height: 90,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Colors.white,
-                                            border: Border.all(
-                                              color: Colors.white,
-                                              width: 3,
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black
-                                                    .withOpacity(0.15),
-                                                blurRadius: 15,
-                                                spreadRadius: 2,
-                                              ),
-                                            ],
-                                          ),
-                                          child: const Icon(
-                                            Icons.person,
-                                            size: 45,
-                                            color: Color(0xFF0E8F6A),
-                                          ),
-                                        ),
-                                        // Badge verified (optional)
-                                        Positioned(
-                                          bottom: 0,
-                                          right: 0,
-                                          child: Container(
-                                            width: 28,
-                                            height: 28,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Colors.white,
-                                              border: Border.all(
-                                                color: const Color(0xFF0E8F6A),
-                                                width: 2,
-                                              ),
-                                            ),
-                                            child: const Icon(
-                                              Icons.check,
-                                              size: 16,
-                                              color: Color(0xFF0E8F6A),
-                                            ),
-                                          ),
+                              // Avatar dengan border
+                              Stack(
+                                children: [
+                                  Container(
+                                    width: 90,
+                                    height: 90,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.grey[100],
+                                      border: Border.all(
+                                        color: Colors.grey[300]!,
+                                        width: 3,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.08),
+                                          blurRadius: 10,
+                                          spreadRadius: 1,
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(width: 16),
-                                    // Info user
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: Text(
-                                                  user!['name'] ?? 'User',
-                                                  style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 22,
-                                                    fontWeight: FontWeight.bold,
-                                                    letterSpacing: -0.5,
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              Icon(
-                                                Icons.arrow_forward_ios,
-                                                color: Colors.white
-                                                    .withOpacity(0.8),
-                                                size: 16,
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 6),
-                                          Text(
-                                            user!['email'] ?? '',
-                                            style: TextStyle(
-                                              color:
-                                                  Colors.white.withOpacity(0.9),
-                                              fontSize: 13,
+                                    child: const Icon(
+                                      Icons.person,
+                                      size: 45,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  // Badge verified (optional)
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: Container(
+                                      width: 28,
+                                      height: 28,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.white,
+                                        border: Border.all(
+                                          color: const Color(0xFF0E8F6A),
+                                          width: 2,
+                                        ),
+                                      ),
+                                      child: const Icon(
+                                        Icons.check,
+                                        size: 16,
+                                        color: Color(0xFF0E8F6A),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 16),
+                              // Info user
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            user!['name'] ?? 'User',
+                                            style: const TextStyle(
+                                              color: Colors.black87,
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: -0.5,
                                             ),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                           ),
-                                          if (user!['gaji_bulanan'] !=
-                                              null) ...[
-                                            const SizedBox(height: 8),
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                horizontal: 10,
-                                                vertical: 4,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white
-                                                    .withOpacity(0.2),
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                              child: Text(
-                                                'Gaji: ${currencyFormat.format(double.tryParse(user!['gaji_bulanan'].toString()) ?? 0)}',
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ],
-                                      ),
+                                        ),
+                                        Icon(
+                                          Icons.arrow_forward_ios,
+                                          color: Colors.grey[600],
+                                          size: 16,
+                                        ),
+                                      ],
                                     ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      user!['email'] ?? '',
+                                      style: TextStyle(
+                                        color: Colors.grey[700],
+                                        fontSize: 13,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    if (user!['gaji_bulanan'] != null) ...[
+                                      const SizedBox(height: 8),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                          vertical: 4,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[100],
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          border: Border.all(
+                                            color: Colors.grey[300]!,
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'Gaji: ${currencyFormat.format(double.tryParse(user!['gaji_bulanan'].toString()) ?? 0)}',
+                                          style: TextStyle(
+                                            color: Colors.grey[800],
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ],
                                 ),
                               ),
@@ -286,56 +233,7 @@ class _AccountPageState extends State<AccountPage> {
                               description: 'Lihat informasi akun Anda',
                               color: Colors.blue,
                               onTap: () {
-                                // Bisa ditambahkan navigasi ke detail profil
-                              },
-                            ),
-                            _buildMenuCard(
-                              icon: Icons.email_outlined,
-                              title: 'Email',
-                              description: user!['email'] ?? 'Tidak ada email',
-                              color: Colors.orange,
-                              showArrow: false,
-                            ),
-                            _buildMenuCard(
-                              icon: Icons.account_balance_wallet_outlined,
-                              title: 'Gaji Bulanan',
-                              description: user!['gaji_bulanan'] != null
-                                  ? currencyFormat.format(double.tryParse(
-                                          user!['gaji_bulanan'].toString()) ??
-                                      0)
-                                  : 'Belum diatur',
-                              color: Colors.green,
-                              showArrow: false,
-                            ),
-                            const SizedBox(height: 32),
-                            // Pengaturan Section
-                            _buildSectionTitle('Pengaturan'),
-                            const SizedBox(height: 12),
-                            _buildMenuCard(
-                              icon: Icons.settings_outlined,
-                              title: 'Pengaturan',
-                              description: 'Kelola pengaturan aplikasi',
-                              color: Colors.grey[700]!,
-                              onTap: () {
-                                // Bisa ditambahkan navigasi ke pengaturan
-                              },
-                            ),
-                            _buildMenuCard(
-                              icon: Icons.help_outline,
-                              title: 'Bantuan',
-                              description: 'Dapatkan bantuan dan dukungan',
-                              color: Colors.purple,
-                              onTap: () {
-                                // Bisa ditambahkan navigasi ke bantuan
-                              },
-                            ),
-                            _buildMenuCard(
-                              icon: Icons.info_outline,
-                              title: 'Tentang',
-                              description: 'Informasi tentang aplikasi',
-                              color: Colors.teal,
-                              onTap: () {
-                                // Bisa ditambahkan dialog tentang aplikasi
+                                Navigator.pushNamed(context, '/detail-profil');
                               },
                             ),
                             const SizedBox(height: 32),
