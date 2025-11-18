@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../services/local_storage.dart';
 import 'package:intl/intl.dart';
-import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_bottom_nav.dart';
 
 class HomePage extends StatefulWidget {
@@ -220,7 +219,12 @@ class _HomePageState extends State<HomePage> {
     final sisaGaji = totalGaji - totalBulan;
 
     return Scaffold(
-      appBar: CustomAppBar(userName: userName),
+      appBar: AppBar(
+        title: Text('Halo, $userName'),
+        backgroundColor: const Color(0xFF0E8F6A),
+        elevation: 0,
+        automaticallyImplyLeading: false,
+      ),
       backgroundColor: Color(0xFF0E8F6A),
       body: isLoading
           ? Container(
@@ -242,7 +246,6 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     // ================= Header Gradient Section =================
                     Container(
-                      height: 200,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
@@ -253,37 +256,71 @@ class _HomePageState extends State<HomePage> {
                             Color(0xFF1AD9A0),
                           ],
                         ),
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(30),
+                          bottomRight: Radius.circular(30),
+                        ),
                       ),
                       child: Stack(
+                        clipBehavior: Clip.none,
                         children: [
-                          // Decorative circles
+                          // Decorative circles dengan gradient yang smooth
                           Positioned(
-                            top: -50,
-                            right: -50,
+                            top: -25,
+                            right: -25,
                             child: Container(
-                              width: 150,
-                              height: 150,
+                              width: 80,
+                              height: 80,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.white.withOpacity(0.1),
+                                gradient: RadialGradient(
+                                  colors: [
+                                    Color(0xFF1AD9A0).withOpacity(0.15),
+                                    Color(0xFF14B885).withOpacity(0.08),
+                                    Colors.transparent,
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                           Positioned(
-                            top: 80,
-                            left: -30,
+                            top: 15,
+                            left: -20,
                             child: Container(
-                              width: 100,
-                              height: 100,
+                              width: 65,
+                              height: 65,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.white.withOpacity(0.08),
+                                gradient: RadialGradient(
+                                  colors: [
+                                    Color(0xFF14B885).withOpacity(0.12),
+                                    Color(0xFF0E8F6A).withOpacity(0.06),
+                                    Colors.transparent,
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 0,
+                            right: 35,
+                            child: Container(
+                              width: 45,
+                              height: 45,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: RadialGradient(
+                                  colors: [
+                                    Color(0xFF1AD9A0).withOpacity(0.1),
+                                    Colors.transparent,
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                           // Content
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
+                            padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.end,

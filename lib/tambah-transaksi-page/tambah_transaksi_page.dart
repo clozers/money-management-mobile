@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../services/api_service.dart';
 import '../services/local_storage.dart';
-import '../widgets/custom_app_bar.dart';
 
 class TambahTransaksiPage extends StatefulWidget {
   final String jenis; // 'pengeluaran' atau 'pemasukan'
@@ -153,250 +152,359 @@ class _TambahTransaksiPageState extends State<TambahTransaksiPage> {
     final isPengeluaran = widget.jenis == 'pengeluaran';
 
     return Scaffold(
-      appBar: CustomAppBar(
-        userName: isPengeluaran ? 'Tambah Pengeluaran' : 'Tambah Pemasukan',
+      appBar: AppBar(
+        title: Text(isPengeluaran ? 'Tambah Pengeluaran' : 'Tambah Pemasukan'),
+        backgroundColor: const Color(0xFF0E8F6A),
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       backgroundColor: Colors.grey[50],
       body: _isLoadingKategori
           ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Header Card
-                    Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: isPengeluaran
-                              ? [
-                                  Colors.red.withOpacity(0.8),
-                                  Colors.red.withOpacity(0.6),
-                                ]
-                              : [
-                                  Colors.green.withOpacity(0.8),
-                                  Colors.green.withOpacity(0.6),
-                                ],
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Icon(
-                              isPengeluaran
-                                  ? Icons.trending_down
-                                  : Icons.trending_up,
-                              color: Colors.white,
-                              size: 32,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  isPengeluaran
-                                      ? 'Tambah Pengeluaran'
-                                      : 'Tambah Pemasukan',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'Catat transaksi secara manual',
-                                  style: TextStyle(
-                                    color: Colors.white.withOpacity(0.9),
-                                    fontSize: 14,
-                                  ),
-                                ),
+          : CustomScrollView(
+              slivers: [
+                // Header dengan gradient
+                SliverToBoxAdapter(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: isPengeluaran
+                            ? [
+                                Colors.red.withOpacity(0.9),
+                                Colors.red.withOpacity(0.7),
+                                Colors.red.withOpacity(0.5),
+                              ]
+                            : [
+                                const Color(0xFF0E8F6A),
+                                const Color(0xFF14B885),
+                                const Color(0xFF1AD9A0),
                               ],
+                      ),
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(30),
+                        bottomRight: Radius.circular(30),
+                      ),
+                    ),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        // Dekorasi lingkaran dengan gradient yang smooth
+                        Positioned(
+                          top: -25,
+                          right: -25,
+                          child: Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: RadialGradient(
+                                colors: isPengeluaran
+                                    ? [
+                                        Colors.red.withOpacity(0.15),
+                                        Colors.red.withOpacity(0.08),
+                                        Colors.transparent,
+                                      ]
+                                    : [
+                                        const Color(0xFF1AD9A0)
+                                            .withOpacity(0.15),
+                                        const Color(0xFF14B885)
+                                            .withOpacity(0.08),
+                                        Colors.transparent,
+                                      ],
+                              ),
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // Kategori Field
-                    Text(
-                      'Kategori',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey[300]!),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: _selectedKategoriId,
-                          isExpanded: true,
-                          hint: const Text('Pilih Kategori'),
-                          items: _kategoris.map((kategori) {
-                            return DropdownMenuItem<String>(
-                              value: kategori['id'].toString(),
-                              child: Text(kategori['nama_kategori'] ?? ''),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedKategoriId = value;
-                            });
-                          },
                         ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // Total Field
-                    Text(
-                      'Jumlah',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      controller: _totalCtrl,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        hintText: '0',
-                        prefixIcon: const Icon(Icons.attach_money),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Jumlah tidak boleh kosong';
-                        }
-                        final num = double.tryParse(
-                            value.replaceAll(RegExp(r'[^\d]'), ''));
-                        if (num == null || num <= 0) {
-                          return 'Jumlah harus lebih dari 0';
-                        }
-                        return null;
-                      },
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // Tanggal Field
-                    Text(
-                      'Tanggal',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      controller: _tanggalCtrl,
-                      readOnly: true,
-                      onTap: _selectDate,
-                      decoration: InputDecoration(
-                        hintText: 'Pilih Tanggal',
-                        prefixIcon: const Icon(Icons.calendar_today),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // Deskripsi Field
-                    Text(
-                      'Deskripsi (Opsional)',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      controller: _deskripsiCtrl,
-                      maxLines: 3,
-                      decoration: InputDecoration(
-                        hintText: 'Tambahkan deskripsi...',
-                        prefixIcon: const Icon(Icons.description),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                      ),
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    // Submit Button
-                    SizedBox(
-                      height: 52,
-                      child: ElevatedButton(
-                        onPressed: _isLoading ? null : _submit,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              isPengeluaran ? Colors.red : Color(0xFF0E8F6A),
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                        Positioned(
+                          top: 15,
+                          left: -20,
+                          child: Container(
+                            width: 65,
+                            height: 65,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: RadialGradient(
+                                colors: isPengeluaran
+                                    ? [
+                                        Colors.red.withOpacity(0.12),
+                                        Colors.red.withOpacity(0.06),
+                                        Colors.transparent,
+                                      ]
+                                    : [
+                                        const Color(0xFF14B885)
+                                            .withOpacity(0.12),
+                                        const Color(0xFF0E8F6A)
+                                            .withOpacity(0.06),
+                                        Colors.transparent,
+                                      ],
+                              ),
+                            ),
                           ),
                         ),
-                        child: _isLoading
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white),
+                        Positioned(
+                          top: 0,
+                          right: 35,
+                          child: Container(
+                            width: 45,
+                            height: 45,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: RadialGradient(
+                                colors: isPengeluaran
+                                    ? [
+                                        Colors.red.withOpacity(0.1),
+                                        Colors.transparent,
+                                      ]
+                                    : [
+                                        const Color(0xFF1AD9A0)
+                                            .withOpacity(0.1),
+                                        Colors.transparent,
+                                      ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Content
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                              )
-                            : Text(
-                                'Simpan ${isPengeluaran ? 'Pengeluaran' : 'Pemasukan'}',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                                child: Icon(
+                                  isPengeluaran
+                                      ? Icons.trending_down
+                                      : Icons.trending_up,
+                                  color: Colors.white,
+                                  size: 28,
                                 ),
                               ),
-                      ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      isPengeluaran
+                                          ? 'Tambah Pengeluaran'
+                                          : 'Tambah Pemasukan',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: -0.5,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Catat transaksi secara manual',
+                                      style: TextStyle(
+                                        color: Colors.white.withOpacity(0.9),
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+
+                // Content
+                SliverPadding(
+                  padding: const EdgeInsets.all(20),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // Kategori Field
+                            Text(
+                              'Kategori',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.grey[300]!),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: _selectedKategoriId,
+                                  isExpanded: true,
+                                  hint: const Text('Pilih Kategori'),
+                                  items: _kategoris.map((kategori) {
+                                    return DropdownMenuItem<String>(
+                                      value: kategori['id'].toString(),
+                                      child:
+                                          Text(kategori['nama_kategori'] ?? ''),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedKategoriId = value;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            // Total Field
+                            Text(
+                              'Jumlah',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            TextFormField(
+                              controller: _totalCtrl,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                hintText: '0',
+                                prefixIcon: const Icon(Icons.attach_money),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white,
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Jumlah tidak boleh kosong';
+                                }
+                                final num = double.tryParse(
+                                    value.replaceAll(RegExp(r'[^\d]'), ''));
+                                if (num == null || num <= 0) {
+                                  return 'Jumlah harus lebih dari 0';
+                                }
+                                return null;
+                              },
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            // Tanggal Field
+                            Text(
+                              'Tanggal',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            TextFormField(
+                              controller: _tanggalCtrl,
+                              readOnly: true,
+                              onTap: _selectDate,
+                              decoration: InputDecoration(
+                                hintText: 'Pilih Tanggal',
+                                prefixIcon: const Icon(Icons.calendar_today),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white,
+                              ),
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            // Deskripsi Field
+                            Text(
+                              'Deskripsi (Opsional)',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            TextFormField(
+                              controller: _deskripsiCtrl,
+                              maxLines: 3,
+                              decoration: InputDecoration(
+                                hintText: 'Tambahkan deskripsi...',
+                                prefixIcon: const Icon(Icons.description),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white,
+                              ),
+                            ),
+
+                            const SizedBox(height: 32),
+
+                            // Submit Button
+                            SizedBox(
+                              height: 52,
+                              child: ElevatedButton(
+                                onPressed: _isLoading ? null : _submit,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: isPengeluaran
+                                      ? Colors.red
+                                      : Color(0xFF0E8F6A),
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                child: _isLoading
+                                    ? const SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                  Colors.white),
+                                        ),
+                                      )
+                                    : Text(
+                                        'Simpan ${isPengeluaran ? 'Pengeluaran' : 'Pemasukan'}',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ]),
+                  ),
+                ),
+              ],
             ),
     );
   }

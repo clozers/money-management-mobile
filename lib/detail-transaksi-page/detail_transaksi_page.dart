@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../services/api_service.dart';
 import '../services/local_storage.dart';
-import '../widgets/custom_app_bar.dart';
 
 class DetailTransaksiPage extends StatefulWidget {
   final String transaksiId;
@@ -51,7 +50,15 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(userName: 'Detail Transaksi'),
+      appBar: AppBar(
+        title: const Text('Detail Transaksi'),
+        backgroundColor: const Color(0xFF0E8F6A),
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       backgroundColor: Colors.grey[50],
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())

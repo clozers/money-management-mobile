@@ -206,59 +206,59 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   SizedBox(height: 32),
                   // Gaji Bulanan Field - Clean & Minimal
-                  TextFormField(
-                    controller: gajiCtrl,
-                    keyboardType: TextInputType.number,
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      labelText: 'Gaji Bulanan',
-                      labelStyle:
-                          TextStyle(color: Colors.white.withOpacity(0.7)),
-                      prefixIcon: Icon(
-                        Icons.attach_money,
-                        color: Colors.white.withOpacity(0.7),
-                      ),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.white.withOpacity(0.3),
-                          width: 1,
-                        ),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                          width: 2,
-                        ),
-                      ),
-                      errorBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.red.shade300,
-                          width: 1,
-                        ),
-                      ),
-                      focusedErrorBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.red.shade300,
-                          width: 2,
-                        ),
-                      ),
-                      errorStyle: TextStyle(color: Colors.white),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Gaji bulanan tidak boleh kosong';
-                      }
-                      final gaji = double.tryParse(value);
-                      if (gaji == null) {
-                        return 'Gaji harus berupa angka';
-                      }
-                      if (gaji < 0) {
-                        return 'Gaji tidak boleh negatif';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 32),
+                  // TextFormField(
+                  //   controller: gajiCtrl,
+                  //   keyboardType: TextInputType.number,
+                  //   style: TextStyle(color: Colors.white),
+                  //   decoration: InputDecoration(
+                  //     labelText: 'Gaji Bulanan',
+                  //     labelStyle:
+                  //         TextStyle(color: Colors.white.withOpacity(0.7)),
+                  //     prefixIcon: Icon(
+                  //       Icons.attach_money,
+                  //       color: Colors.white.withOpacity(0.7),
+                  //     ),
+                  //     enabledBorder: UnderlineInputBorder(
+                  //       borderSide: BorderSide(
+                  //         color: Colors.white.withOpacity(0.3),
+                  //         width: 1,
+                  //       ),
+                  //     ),
+                  //     focusedBorder: UnderlineInputBorder(
+                  //       borderSide: BorderSide(
+                  //         color: Colors.white,
+                  //         width: 2,
+                  //       ),
+                  //     ),
+                  //     errorBorder: UnderlineInputBorder(
+                  //       borderSide: BorderSide(
+                  //         color: Colors.red.shade300,
+                  //         width: 1,
+                  //       ),
+                  //     ),
+                  //     focusedErrorBorder: UnderlineInputBorder(
+                  //       borderSide: BorderSide(
+                  //         color: Colors.red.shade300,
+                  //         width: 2,
+                  //       ),
+                  //     ),
+                  //     errorStyle: TextStyle(color: Colors.white),
+                  //   ),
+                  //   validator: (value) {
+                  //     if (value == null || value.isEmpty) {
+                  //       return 'Gaji bulanan tidak boleh kosong';
+                  //     }
+                  //     final gaji = double.tryParse(value);
+                  //     if (gaji == null) {
+                  //       return 'Gaji harus berupa angka';
+                  //     }
+                  //     if (gaji < 0) {
+                  //       return 'Gaji tidak boleh negatif';
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
+                  // SizedBox(height: 32),
                   // Password Field - Clean & Minimal
                   TextFormField(
                     controller: passCtrl,

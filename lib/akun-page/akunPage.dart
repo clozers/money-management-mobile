@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../services/api_service.dart';
 import '../services/local_storage.dart';
-import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_bottom_nav.dart';
 
 class AccountPage extends StatefulWidget {
@@ -43,7 +42,12 @@ class _AccountPageState extends State<AccountPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(userName: user?['name']),
+      appBar: AppBar(
+        title: Text('Halo, ${user?['name'] ?? 'Pengguna'}'),
+        backgroundColor: const Color(0xFF0E8F6A),
+        elevation: 0,
+        automaticallyImplyLeading: false,
+      ),
       backgroundColor: Colors.grey[50],
       bottomNavigationBar: CustomBottomNav(
         currentIndex: 2,
@@ -89,77 +93,155 @@ class _AccountPageState extends State<AccountPage> {
                   onRefresh: loadData,
                   child: CustomScrollView(
                     slivers: [
-                      // Header dengan profile (tanpa background hijau)
+                      // Header dengan gradient
                       SliverToBoxAdapter(
                         child: Container(
-                          padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
-                          color: Colors.white,
-                          child: Row(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                const Color(0xFF0E8F6A),
+                                const Color(0xFF14B885),
+                                const Color(0xFF1AD9A0),
+                              ],
+                            ),
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(30),
+                              bottomRight: Radius.circular(30),
+                            ),
+                          ),
+                          child: Stack(
+                            clipBehavior: Clip.none,
                             children: [
-                              // Avatar dengan border
-                              Stack(
-                                children: [
-                                  Container(
-                                    width: 90,
-                                    height: 90,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.grey[100],
-                                      border: Border.all(
-                                        color: Colors.grey[300]!,
-                                        width: 3,
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.08),
-                                          blurRadius: 10,
-                                          spreadRadius: 1,
+                              // Dekorasi lingkaran dengan gradient yang smooth
+                              Positioned(
+                                top: -25,
+                                right: -25,
+                                child: Container(
+                                  width: 80,
+                                  height: 80,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: RadialGradient(
+                                      colors: [
+                                        const Color(0xFF1AD9A0)
+                                            .withOpacity(0.15),
+                                        const Color(0xFF14B885)
+                                            .withOpacity(0.08),
+                                        Colors.transparent,
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                top: 15,
+                                left: -20,
+                                child: Container(
+                                  width: 65,
+                                  height: 65,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: RadialGradient(
+                                      colors: [
+                                        const Color(0xFF14B885)
+                                            .withOpacity(0.12),
+                                        const Color(0xFF0E8F6A)
+                                            .withOpacity(0.06),
+                                        Colors.transparent,
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                top: 0,
+                                right: 35,
+                                child: Container(
+                                  width: 45,
+                                  height: 45,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: RadialGradient(
+                                      colors: [
+                                        const Color(0xFF1AD9A0)
+                                            .withOpacity(0.1),
+                                        Colors.transparent,
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              // Content
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(20, 16, 20, 32),
+                                child: Row(
+                                  children: [
+                                    // Avatar dengan border
+                                    Stack(
+                                      children: [
+                                        Container(
+                                          width: 90,
+                                          height: 90,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.white,
+                                            border: Border.all(
+                                              color: Colors.white,
+                                              width: 3,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.15),
+                                                blurRadius: 20,
+                                                spreadRadius: 2,
+                                              ),
+                                            ],
+                                          ),
+                                          child: const Icon(
+                                            Icons.person,
+                                            size: 45,
+                                            color: Color(0xFF0E8F6A),
+                                          ),
+                                        ),
+                                        // Badge verified
+                                        Positioned(
+                                          bottom: 0,
+                                          right: 0,
+                                          child: Container(
+                                            width: 28,
+                                            height: 28,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.white,
+                                              border: Border.all(
+                                                color: Colors.white,
+                                                width: 2,
+                                              ),
+                                            ),
+                                            child: const Icon(
+                                              Icons.check,
+                                              size: 16,
+                                              color: Color(0xFF0E8F6A),
+                                            ),
+                                          ),
                                         ),
                                       ],
                                     ),
-                                    child: const Icon(
-                                      Icons.person,
-                                      size: 45,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  // Badge verified (optional)
-                                  Positioned(
-                                    bottom: 0,
-                                    right: 0,
-                                    child: Container(
-                                      width: 28,
-                                      height: 28,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.white,
-                                        border: Border.all(
-                                          color: const Color(0xFF0E8F6A),
-                                          width: 2,
-                                        ),
-                                      ),
-                                      child: const Icon(
-                                        Icons.check,
-                                        size: 16,
-                                        color: Color(0xFF0E8F6A),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(width: 16),
-                              // Info user
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
+                                    const SizedBox(width: 16),
+                                    // Info user
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
                                             user!['name'] ?? 'User',
                                             style: const TextStyle(
-                                              color: Colors.black87,
+                                              color: Colors.white,
                                               fontSize: 22,
                                               fontWeight: FontWeight.bold,
                                               letterSpacing: -0.5,
@@ -167,50 +249,50 @@ class _AccountPageState extends State<AccountPage> {
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                           ),
-                                        ),
-                                        Icon(
-                                          Icons.arrow_forward_ios,
-                                          color: Colors.grey[600],
-                                          size: 16,
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 6),
-                                    Text(
-                                      user!['email'] ?? '',
-                                      style: TextStyle(
-                                        color: Colors.grey[700],
-                                        fontSize: 13,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    if (user!['gaji_bulanan'] != null) ...[
-                                      const SizedBox(height: 8),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey[100],
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          border: Border.all(
-                                            color: Colors.grey[300]!,
-                                            width: 1,
+                                          const SizedBox(height: 6),
+                                          Text(
+                                            user!['email'] ?? '',
+                                            style: TextStyle(
+                                              color:
+                                                  Colors.white.withOpacity(0.9),
+                                              fontSize: 13,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                        ),
-                                        child: Text(
-                                          'Gaji: ${currencyFormat.format(double.tryParse(user!['gaji_bulanan'].toString()) ?? 0)}',
-                                          style: TextStyle(
-                                            color: Colors.grey[800],
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
+                                          if (user!['gaji_bulanan'] !=
+                                              null) ...[
+                                            const SizedBox(height: 8),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 10,
+                                                vertical: 4,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white
+                                                    .withOpacity(0.2),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                border: Border.all(
+                                                  color: Colors.white
+                                                      .withOpacity(0.3),
+                                                  width: 1,
+                                                ),
+                                              ),
+                                              child: Text(
+                                                'Gaji: ${currencyFormat.format(double.tryParse(user!['gaji_bulanan'].toString()) ?? 0)}',
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ],
                                       ),
-                                    ],
+                                    ),
                                   ],
                                 ),
                               ),
