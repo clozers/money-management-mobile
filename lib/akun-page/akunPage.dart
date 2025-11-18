@@ -26,7 +26,7 @@ class _AccountPageState extends State<AccountPage> {
     loadData();
   }
 
-  void loadData() async {
+  Future<void> loadData() async {
     token = await LocalStorage.getToken();
 
     if (token != null) {
@@ -44,7 +44,7 @@ class _AccountPageState extends State<AccountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(userName: user?['name']),
-      backgroundColor: Colors.grey[100], // 🔥 BIAR SAMA DENGAN HOME
+      backgroundColor: Colors.grey[50],
       bottomNavigationBar: CustomBottomNav(
         currentIndex: 2,
         onTap: (index) {
@@ -58,47 +58,336 @@ class _AccountPageState extends State<AccountPage> {
       body: loading
           ? const Center(child: CircularProgressIndicator())
           : user == null
-              ? const Center(child: Text("Gagal memuat data user"))
-              : Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: ListView(
-                    // 🔥 GANTI Column → ListView
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        "Informasi Akun",
+                      Icon(
+                        Icons.error_outline,
+                        size: 64,
+                        color: Colors.grey[400],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Gagal memuat data user',
                         style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[600],
+                          fontSize: 16,
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      _infoCard("Nama", user!['name'] ?? 'Tidak ada'),
-                      _infoCard("Email", user!['email'] ?? 'Tidak ada'),
-                      _infoCard(
-                        "Gaji",
-                        user!['gaji_bulanan'] != null
-                            ? currencyFormat.format(double.tryParse(
-                                    user!['gaji_bulanan'].toString()) ??
-                                0)
-                            : 'Tidak ada',
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: loadData,
+                        child: const Text('Coba Lagi'),
                       ),
-                      const SizedBox(height: 40),
-                      Center(
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            await LocalStorage.logout();
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, '/login', (route) => false);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 40,
-                              vertical: 12,
+                    ],
+                  ),
+                )
+              : RefreshIndicator(
+                  backgroundColor: const Color(0xFF0E8F6A),
+                  color: Colors.white,
+                  onRefresh: loadData,
+                  child: CustomScrollView(
+                    slivers: [
+                      // Header dengan profile
+                      SliverToBoxAdapter(
+                        child: Container(
+                          height: 240,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                const Color(0xFF0E8F6A),
+                                const Color(0xFF14B885),
+                                const Color(0xFF1AD9A0),
+                              ],
+                            ),
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(30),
+                              bottomRight: Radius.circular(30),
                             ),
                           ),
-                          child: const Text("Logout"),
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              // Dekorasi lingkaran
+                              Positioned(
+                                top: -50,
+                                right: -50,
+                                child: Container(
+                                  width: 150,
+                                  height: 150,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white.withOpacity(0.1),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                top: 80,
+                                left: -30,
+                                child: Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white.withOpacity(0.08),
+                                  ),
+                                ),
+                              ),
+                              // Content
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(20, 40, 20, 30),
+                                child: Row(
+                                  children: [
+                                    // Avatar dengan border
+                                    Stack(
+                                      children: [
+                                        Container(
+                                          width: 90,
+                                          height: 90,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.white,
+                                            border: Border.all(
+                                              color: Colors.white,
+                                              width: 3,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.15),
+                                                blurRadius: 15,
+                                                spreadRadius: 2,
+                                              ),
+                                            ],
+                                          ),
+                                          child: const Icon(
+                                            Icons.person,
+                                            size: 45,
+                                            color: Color(0xFF0E8F6A),
+                                          ),
+                                        ),
+                                        // Badge verified (optional)
+                                        Positioned(
+                                          bottom: 0,
+                                          right: 0,
+                                          child: Container(
+                                            width: 28,
+                                            height: 28,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.white,
+                                              border: Border.all(
+                                                color: const Color(0xFF0E8F6A),
+                                                width: 2,
+                                              ),
+                                            ),
+                                            child: const Icon(
+                                              Icons.check,
+                                              size: 16,
+                                              color: Color(0xFF0E8F6A),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(width: 16),
+                                    // Info user
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  user!['name'] ?? 'User',
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 22,
+                                                    fontWeight: FontWeight.bold,
+                                                    letterSpacing: -0.5,
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              Icon(
+                                                Icons.arrow_forward_ios,
+                                                color: Colors.white
+                                                    .withOpacity(0.8),
+                                                size: 16,
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 6),
+                                          Text(
+                                            user!['email'] ?? '',
+                                            style: TextStyle(
+                                              color:
+                                                  Colors.white.withOpacity(0.9),
+                                              fontSize: 13,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          if (user!['gaji_bulanan'] !=
+                                              null) ...[
+                                            const SizedBox(height: 8),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 10,
+                                                vertical: 4,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white
+                                                    .withOpacity(0.2),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child: Text(
+                                                'Gaji: ${currencyFormat.format(double.tryParse(user!['gaji_bulanan'].toString()) ?? 0)}',
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      // Menu Items
+                      SliverPadding(
+                        padding: const EdgeInsets.all(20),
+                        sliver: SliverList(
+                          delegate: SliverChildListDelegate([
+                            // Informasi Akun Section
+                            _buildSectionTitle('Informasi Akun'),
+                            const SizedBox(height: 12),
+                            _buildMenuCard(
+                              icon: Icons.person_outline,
+                              title: 'Detail Profil',
+                              description: 'Lihat informasi akun Anda',
+                              color: Colors.blue,
+                              onTap: () {
+                                // Bisa ditambahkan navigasi ke detail profil
+                              },
+                            ),
+                            _buildMenuCard(
+                              icon: Icons.email_outlined,
+                              title: 'Email',
+                              description: user!['email'] ?? 'Tidak ada email',
+                              color: Colors.orange,
+                              showArrow: false,
+                            ),
+                            _buildMenuCard(
+                              icon: Icons.account_balance_wallet_outlined,
+                              title: 'Gaji Bulanan',
+                              description: user!['gaji_bulanan'] != null
+                                  ? currencyFormat.format(double.tryParse(
+                                          user!['gaji_bulanan'].toString()) ??
+                                      0)
+                                  : 'Belum diatur',
+                              color: Colors.green,
+                              showArrow: false,
+                            ),
+                            const SizedBox(height: 32),
+                            // Pengaturan Section
+                            _buildSectionTitle('Pengaturan'),
+                            const SizedBox(height: 12),
+                            _buildMenuCard(
+                              icon: Icons.settings_outlined,
+                              title: 'Pengaturan',
+                              description: 'Kelola pengaturan aplikasi',
+                              color: Colors.grey[700]!,
+                              onTap: () {
+                                // Bisa ditambahkan navigasi ke pengaturan
+                              },
+                            ),
+                            _buildMenuCard(
+                              icon: Icons.help_outline,
+                              title: 'Bantuan',
+                              description: 'Dapatkan bantuan dan dukungan',
+                              color: Colors.purple,
+                              onTap: () {
+                                // Bisa ditambahkan navigasi ke bantuan
+                              },
+                            ),
+                            _buildMenuCard(
+                              icon: Icons.info_outline,
+                              title: 'Tentang',
+                              description: 'Informasi tentang aplikasi',
+                              color: Colors.teal,
+                              onTap: () {
+                                // Bisa ditambahkan dialog tentang aplikasi
+                              },
+                            ),
+                            const SizedBox(height: 32),
+                            // Logout
+                            _buildMenuCard(
+                              icon: Icons.logout,
+                              title: 'Keluar',
+                              description: 'Keluar dari akun Anda',
+                              color: Colors.red,
+                              onTap: () async {
+                                final confirm = await showDialog<bool>(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    title: const Text('Konfirmasi Logout'),
+                                    content: const Text(
+                                      'Apakah Anda yakin ingin keluar?',
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, false),
+                                        child: const Text('Batal'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, true),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.red,
+                                          foregroundColor: Colors.white,
+                                        ),
+                                        child: const Text('Logout'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                                if (confirm == true) {
+                                  await LocalStorage.logout();
+                                  if (context.mounted) {
+                                    Navigator.pushNamedAndRemoveUntil(
+                                      context,
+                                      '/login',
+                                      (route) => false,
+                                    );
+                                  }
+                                }
+                              },
+                            ),
+                            const SizedBox(height: 100),
+                          ]),
                         ),
                       ),
                     ],
@@ -107,36 +396,107 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  Widget _infoCard(String title, String value) {
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: Colors.black87,
+        letterSpacing: -0.3,
+      ),
+    );
+  }
+
+  Widget _buildMenuCard({
+    required IconData icon,
+    required String title,
+    required String description,
+    required Color color,
+    VoidCallback? onTap,
+    bool showArrow = true,
+  }) {
     return Container(
-      padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: const [
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
           BoxShadow(
-            blurRadius: 4,
-            color: Colors.black12,
-            offset: Offset(0, 2),
-          )
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+            spreadRadius: 0,
+          ),
         ],
+        border: Border.all(
+          color: Colors.grey.withOpacity(0.1),
+          width: 1,
+        ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                // Icon dengan background
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: color,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                // Title dan Description
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                          letterSpacing: -0.3,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        description,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey[600],
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                if (showArrow && onTap != null) ...[
+                  const SizedBox(width: 8),
+                  Icon(
+                    Icons.chevron_right,
+                    color: Colors.grey[400],
+                    size: 20,
+                  ),
+                ],
+              ],
             ),
           ),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 16),
-          ),
-        ],
+        ),
       ),
     );
   }

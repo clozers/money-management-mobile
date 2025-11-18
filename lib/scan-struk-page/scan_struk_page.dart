@@ -76,16 +76,30 @@ class _ScanStrukPageState extends State<ScanStrukPage> {
 
       setState(() {
         _isLoading = false;
-        _scanResult = result;
+        // Response format: {"success":true,"nota":{...},"sisa_gaji":0}
+        // Ambil data dari 'nota' jika ada, jika tidak pakai result langsung
+        if (result != null && result.containsKey('nota')) {
+          _scanResult = result['nota'];
+          // Tambahkan sisa_gaji ke scanResult jika ada
+          if (result.containsKey('sisa_gaji')) {
+            _scanResult!['sisa_gaji'] = result['sisa_gaji'];
+          }
+        } else {
+          _scanResult = result;
+        }
       });
 
-      if (result != null) {
+      if (result != null &&
+          (result.containsKey('success') && result['success'] == true ||
+              result.containsKey('nota'))) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Struk berhasil di-scan!'),
+          SnackBar(
+            content: Text(result['message'] ?? 'Struk berhasil di-scan!'),
             backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
           ),
         );
+        // Jangan auto-navigate, biarkan user melihat hasil scan dulu
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -367,6 +381,7 @@ class _ScanStrukPageState extends State<ScanStrukPage> {
                       ],
                     ),
                     const SizedBox(height: 20),
+                    // Total Pengeluaran
                     _buildResultItem(
                       'Total Pengeluaran',
                       currencyFormat.format(
@@ -376,24 +391,123 @@ class _ScanStrukPageState extends State<ScanStrukPage> {
                       ),
                       Colors.red,
                     ),
+                    // Sisa Gaji (jika ada)
+                    if (_scanResult!['sisa_gaji'] != null)
+                      _buildResultItem(
+                        'Sisa Gaji',
+                        currencyFormat.format(
+                          double.tryParse(
+                                  _scanResult!['sisa_gaji']?.toString() ??
+                                      '0') ??
+                              0,
+                        ),
+                        Colors.green,
+                      ),
+                    // Kategori (jika ada)
                     if (_scanResult!['kategori'] != null)
                       _buildResultItem(
                         'Kategori',
                         _scanResult!['kategori']['nama_kategori'] ?? '-',
                         Colors.blue,
                       ),
+                    // Tanggal
                     if (_scanResult!['tanggal'] != null)
                       _buildResultItem(
                         'Tanggal',
                         _scanResult!['tanggal'] ?? '-',
                         Colors.grey[700]!,
                       ),
-                    if (_scanResult!['deskripsi'] != null)
-                      _buildResultItem(
-                        'Deskripsi',
-                        _scanResult!['deskripsi'] ?? '-',
-                        Colors.grey[700]!,
+                    // Items (jika ada)
+                    if (_scanResult!['items'] != null &&
+                        (_scanResult!['items'] as List).isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      const Divider(),
+                      const SizedBox(height: 12),
+                      const Text(
+                        'Daftar Item',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
                       ),
+                      const SizedBox(height: 12),
+                      ...(_scanResult!['items'] as List).map((item) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      item['nama'] ?? 'Item',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Qty: ${item['qty'] ?? 0}',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Text(
+                                currencyFormat.format(
+                                  double.tryParse(
+                                          item['harga']?.toString() ?? '0') ??
+                                      0,
+                                ),
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ],
+                    // Tombol untuk melihat detail atau kembali
+                    if (_scanResult!['id'] != null) ...[
+                      const SizedBox(height: 20),
+                      const Divider(),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.pop(context, true);
+                            // Navigasi ke detail transaksi jika diperlukan
+                            // Navigator.pushNamed(
+                            //   context,
+                            //   '/detail-transaksi',
+                            //   arguments: {'id': _scanResult!['id']},
+                            // );
+                          },
+                          icon: const Icon(Icons.check),
+                          label: const Text('Selesai'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF0E8F6A),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),

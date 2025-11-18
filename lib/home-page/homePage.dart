@@ -50,6 +50,24 @@ class _HomePageState extends State<HomePage> {
       userName = home?['nama_user'] ?? userName;
 
       // Data dari API /pengeluaran
+      // Sort dari terbaru ke terlama berdasarkan created_at atau tanggal
+      pengeluaran.sort((a, b) {
+        // Coba pakai created_at dulu, kalau tidak ada pakai tanggal
+        String dateA = a['created_at'] ?? a['tanggal'] ?? '';
+        String dateB = b['created_at'] ?? b['tanggal'] ?? '';
+
+        if (dateA.isEmpty || dateB.isEmpty) return 0;
+
+        try {
+          final dateTimeA = DateTime.parse(dateA);
+          final dateTimeB = DateTime.parse(dateB);
+          // Sort descending (terbaru dulu)
+          return dateTimeB.compareTo(dateTimeA);
+        } catch (e) {
+          return 0;
+        }
+      });
+
       transaksi = pengeluaran; // 🔥 AKHIRNYA MUNCUL
 
       isLoading = false;
