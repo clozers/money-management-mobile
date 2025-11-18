@@ -29,20 +29,32 @@ class ApiService {
   }
 
   // 📝 REGISTER
-  static Future<Map<String, dynamic>?> register(
-      String name, String email, String password) async {
+  static Future<Map<String, dynamic>?> register(String name, String email,
+      String password, String passwordConfirmation, String gajiBulanan) async {
+    // Convert gaji to number if possible
+    final gajiValue = double.tryParse(gajiBulanan) ?? 0;
+
+    final body = jsonEncode({
+      'name': name,
+      'email': email,
+      'password': password,
+      'password_confirmation': passwordConfirmation,
+      'gaji': gajiValue,
+    });
+
+    print('Register request body: $body');
+
     final response = await http.post(
       Uri.parse('$baseUrl/registrasi'),
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
       },
-      body: {
-        'name': name,
-        'email': email,
-        'password': password,
-      },
+      body: body,
     );
+
+    print('Register response status: ${response.statusCode}');
+    print('Register response body: ${response.body}');
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       return jsonDecode(response.body);

@@ -72,11 +72,15 @@ class _AccountPageState extends State<AccountPage> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      _infoCard("Nama", user!['name']),
-                      _infoCard("Email", user!['email']),
+                      _infoCard("Nama", user!['name'] ?? 'Tidak ada'),
+                      _infoCard("Email", user!['email'] ?? 'Tidak ada'),
                       _infoCard(
                         "Gaji",
-                        currencyFormat.format(user!['gaji_bulanan']),
+                        user!['gaji_bulanan'] != null
+                            ? currencyFormat.format(double.tryParse(
+                                    user!['gaji_bulanan'].toString()) ??
+                                0)
+                            : 'Tidak ada',
                       ),
                       const SizedBox(height: 40),
                       Center(
