@@ -6,6 +6,8 @@ import 'home-page/homePage.dart';
 import 'akun-page/akunPage.dart';
 import 'pengeluaran-page/pengeluaran_page.dart';
 import 'scan-struk-page/scan_struk_page.dart';
+import 'tambah-transaksi-page/tambah_transaksi_page.dart';
+import 'detail-transaksi-page/detail_transaksi_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -30,6 +32,18 @@ class MyApp extends StatelessWidget {
         '/akun': (context) => const AccountPage(),
         '/pengeluaran': (context) => const PengeluaranPage(),
         '/scan-struk': (context) => const ScanStrukPage(),
+        '/tambah-transaksi': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as Map?;
+          return TambahTransaksiPage(
+            jenis: args?['jenis'] ?? 'pengeluaran',
+          );
+        },
+        '/detail-transaksi': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as Map?;
+          return DetailTransaksiPage(
+            transaksiId: args?['id']?.toString() ?? '',
+          );
+        },
       },
     );
   }

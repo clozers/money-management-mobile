@@ -30,7 +30,6 @@ class _PengeluaranPageState extends State<PengeluaranPage> {
     token = await LocalStorage.getToken();
 
     if (token != null) {
-
       final data = await ApiService.getTransaksi(token!);
 
       setState(() {
@@ -38,6 +37,147 @@ class _PengeluaranPageState extends State<PengeluaranPage> {
         loading = false;
       });
     }
+  }
+
+  void _showAddTransactionDialog() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Tambah Transaksi',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 24),
+              // Scan Nota Option
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                leading: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Color(0xFF0E8F6A).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.scanner,
+                    color: Color(0xFF0E8F6A),
+                  ),
+                ),
+                title: const Text(
+                  'Scan Nota',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                subtitle:
+                    const Text('Upload foto struk untuk deteksi otomatis'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/scan-struk');
+                },
+              ),
+              const SizedBox(height: 8),
+              // Tambah Manual - Pengeluaran
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                leading: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.trending_down,
+                    color: Colors.red,
+                  ),
+                ),
+                title: const Text(
+                  'Tambah Pengeluaran',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                subtitle: const Text('Catat pengeluaran secara manual'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  final result = await Navigator.pushNamed(
+                    context,
+                    '/tambah-transaksi',
+                    arguments: {'jenis': 'pengeluaran'},
+                  );
+                  if (result == true) {
+                    loadData(); // Refresh data
+                  }
+                },
+              ),
+              const SizedBox(height: 8),
+              // Tambah Manual - Pemasukan
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                leading: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.trending_up,
+                    color: Colors.green,
+                  ),
+                ),
+                title: const Text(
+                  'Tambah Pemasukan',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                subtitle: const Text('Catat pemasukan secara manual'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  final result = await Navigator.pushNamed(
+                    context,
+                    '/tambah-transaksi',
+                    arguments: {'jenis': 'pemasukan'},
+                  );
+                  if (result == true) {
+                    loadData(); // Refresh data
+                  }
+                },
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -97,17 +237,22 @@ class _PengeluaranPageState extends State<PengeluaranPage> {
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16),
                             ),
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/detail-transaksi',
+                                arguments: {'id': item['id']},
+                              );
+                            },
                           ),
                         );
                       },
                     ),
             ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/tambah');
-        },
-        backgroundColor: Colors.teal,
-        child: const Icon(Icons.add),
+        onPressed: _showAddTransactionDialog,
+        backgroundColor: const Color(0xFF0E8F6A),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
