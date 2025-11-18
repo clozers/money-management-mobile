@@ -220,7 +220,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Halo, $userName'),
+        title: Text('SpendKu', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
         backgroundColor: const Color(0xFF0E8F6A),
         elevation: 0,
         automaticallyImplyLeading: false,

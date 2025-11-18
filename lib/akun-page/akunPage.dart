@@ -43,7 +43,7 @@ class _AccountPageState extends State<AccountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Halo, ${user?['name'] ?? 'Pengguna'}'),
+        title: Text('AkunKu', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
         backgroundColor: const Color(0xFF0E8F6A),
         elevation: 0,
         automaticallyImplyLeading: false,

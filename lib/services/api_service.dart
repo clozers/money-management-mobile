@@ -190,17 +190,26 @@ class ApiService {
     String kategoriId,
     String total,
     String? tanggal,
-    String? deskripsi,
+    String? catatan,
   ) async {
+    // Convert total to number
+    final totalValue =
+        double.tryParse(total.replaceAll(RegExp(r'[^\d]'), '')) ?? 0;
+
+    // Format tanggal
+    final tanggalValue =
+        tanggal ?? DateTime.now().toIso8601String().split('T')[0];
+
+    // Build body sesuai format API: kategori_id, tanggal, total, catatan
     final body = jsonEncode({
-      'jenis': jenis,
-      'kategori_id': kategoriId,
-      'total': total,
-      'tanggal': tanggal ?? DateTime.now().toIso8601String().split('T')[0],
-      'deskripsi': deskripsi ?? '',
+      'kategori_id': int.tryParse(kategoriId) ?? 0,
+      'tanggal': tanggalValue,
+      'total': totalValue,
+      if (catatan != null && catatan.isNotEmpty) 'catatan': catatan,
     });
 
     print('Tambah transaksi request body: $body');
+    print('Jenis transaksi: $jenis');
 
     final response = await http.post(
       Uri.parse('$baseUrl/transaksi'),

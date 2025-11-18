@@ -222,7 +222,7 @@ class _PengeluaranPageState extends State<PengeluaranPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pengeluaran'),
+        title: const Text('Pengeluaran', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
         backgroundColor: const Color(0xFF0E8F6A),
         elevation: 0,
         automaticallyImplyLeading: false,

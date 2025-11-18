@@ -18,7 +18,7 @@ class TambahTransaksiPage extends StatefulWidget {
 class _TambahTransaksiPageState extends State<TambahTransaksiPage> {
   final _formKey = GlobalKey<FormState>();
   final _totalCtrl = TextEditingController();
-  final _deskripsiCtrl = TextEditingController();
+  final _catatanCtrl = TextEditingController();
   final _tanggalCtrl = TextEditingController();
 
   String? _token;
@@ -48,11 +48,16 @@ class _TambahTransaksiPageState extends State<TambahTransaksiPage> {
   Future<void> _loadKategori() async {
     setState(() => _isLoadingKategori = true);
     final kategoris = await ApiService.getKategori(_token!);
+    print('Kategori loaded: ${kategoris.length} items');
+    print('Kategori data: $kategoris');
     setState(() {
       _kategoris = kategoris;
       _isLoadingKategori = false;
       if (_kategoris.isNotEmpty) {
         _selectedKategoriId = _kategoris[0]['id'].toString();
+        print('Selected kategori ID: $_selectedKategoriId');
+      } else {
+        print('No kategori available');
       }
     });
   }
@@ -106,7 +111,7 @@ class _TambahTransaksiPageState extends State<TambahTransaksiPage> {
         _selectedKategoriId!,
         _totalCtrl.text.replaceAll(RegExp(r'[^\d]'), ''),
         _tanggalCtrl.text,
-        _deskripsiCtrl.text.isEmpty ? null : _deskripsiCtrl.text,
+        _catatanCtrl.text.isEmpty ? null : _catatanCtrl.text,
       );
 
       setState(() => _isLoading = false);
@@ -142,7 +147,7 @@ class _TambahTransaksiPageState extends State<TambahTransaksiPage> {
   @override
   void dispose() {
     _totalCtrl.dispose();
-    _deskripsiCtrl.dispose();
+    _catatanCtrl.dispose();
     _tanggalCtrl.dispose();
     super.dispose();
   }
@@ -150,50 +155,46 @@ class _TambahTransaksiPageState extends State<TambahTransaksiPage> {
   @override
   Widget build(BuildContext context) {
     final isPengeluaran = widget.jenis == 'pengeluaran';
+    final primaryColor = isPengeluaran
+        ? const Color(0xFFE63946) // Soft coral red
+        : const Color(0xFF0E8F6A);
+    final gradientColors = isPengeluaran
+        ? [
+            const Color(0xFFE63946),
+            const Color(0xFFF77F7F),
+            const Color(0xFFFFB4B4),
+          ]
+        : [
+            const Color(0xFF0E8F6A),
+            const Color(0xFF14B885),
+            const Color(0xFF1AD9A0),
+          ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(isPengeluaran ? 'Tambah Pengeluaran' : 'Tambah Pemasukan'),
-        backgroundColor: const Color(0xFF0E8F6A),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
       backgroundColor: Colors.grey[50],
       body: _isLoadingKategori
           ? const Center(child: CircularProgressIndicator())
-          : CustomScrollView(
-              slivers: [
-                // Header dengan gradient
-                SliverToBoxAdapter(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: isPengeluaran
-                            ? [
-                                Colors.red.withOpacity(0.9),
-                                Colors.red.withOpacity(0.7),
-                                Colors.red.withOpacity(0.5),
-                              ]
-                            : [
-                                const Color(0xFF0E8F6A),
-                                const Color(0xFF14B885),
-                                const Color(0xFF1AD9A0),
-                              ],
-                      ),
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(30),
-                        bottomRight: Radius.circular(30),
-                      ),
+          : Column(
+              children: [
+                // Header dengan gradient dan back button
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: gradientColors,
                     ),
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30),
+                    ),
+                  ),
+                  child: SafeArea(
+                    bottom: false,
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        // Dekorasi lingkaran dengan gradient yang smooth
+                        // Dekorasi lingkaran
                         Positioned(
                           top: -25,
                           right: -25,
@@ -203,19 +204,11 @@ class _TambahTransaksiPageState extends State<TambahTransaksiPage> {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               gradient: RadialGradient(
-                                colors: isPengeluaran
-                                    ? [
-                                        Colors.red.withOpacity(0.15),
-                                        Colors.red.withOpacity(0.08),
-                                        Colors.transparent,
-                                      ]
-                                    : [
-                                        const Color(0xFF1AD9A0)
-                                            .withOpacity(0.15),
-                                        const Color(0xFF14B885)
-                                            .withOpacity(0.08),
-                                        Colors.transparent,
-                                      ],
+                                colors: [
+                                  gradientColors[0].withOpacity(0.15),
+                                  gradientColors[1].withOpacity(0.08),
+                                  Colors.transparent,
+                                ],
                               ),
                             ),
                           ),
@@ -229,42 +222,11 @@ class _TambahTransaksiPageState extends State<TambahTransaksiPage> {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               gradient: RadialGradient(
-                                colors: isPengeluaran
-                                    ? [
-                                        Colors.red.withOpacity(0.12),
-                                        Colors.red.withOpacity(0.06),
-                                        Colors.transparent,
-                                      ]
-                                    : [
-                                        const Color(0xFF14B885)
-                                            .withOpacity(0.12),
-                                        const Color(0xFF0E8F6A)
-                                            .withOpacity(0.06),
-                                        Colors.transparent,
-                                      ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 0,
-                          right: 35,
-                          child: Container(
-                            width: 45,
-                            height: 45,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: RadialGradient(
-                                colors: isPengeluaran
-                                    ? [
-                                        Colors.red.withOpacity(0.1),
-                                        Colors.transparent,
-                                      ]
-                                    : [
-                                        const Color(0xFF1AD9A0)
-                                            .withOpacity(0.1),
-                                        Colors.transparent,
-                                      ],
+                                colors: [
+                                  gradientColors[1].withOpacity(0.12),
+                                  gradientColors[0].withOpacity(0.06),
+                                  Colors.transparent,
+                                ],
                               ),
                             ),
                           ),
@@ -272,48 +234,79 @@ class _TambahTransaksiPageState extends State<TambahTransaksiPage> {
                         // Content
                         Padding(
                           padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-                          child: Row(
+                          child: Column(
                             children: [
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Icon(
-                                  isPengeluaran
-                                      ? Icons.trending_down
-                                      : Icons.trending_up,
-                                  color: Colors.white,
-                                  size: 28,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      isPengeluaran
-                                          ? 'Tambah Pengeluaran'
-                                          : 'Tambah Pemasukan',
-                                      style: const TextStyle(
+                              // Back button
+                              Row(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.2),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: IconButton(
+                                      icon: const Icon(
+                                        Icons.arrow_back,
                                         color: Colors.white,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: -0.5,
+                                      ),
+                                      onPressed: () => Navigator.pop(context),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              // Title section
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(14),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.25),
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(
+                                        color: Colors.white.withOpacity(0.3),
+                                        width: 1,
                                       ),
                                     ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'Catat transaksi secara manual',
-                                      style: TextStyle(
-                                        color: Colors.white.withOpacity(0.9),
-                                        fontSize: 14,
-                                      ),
+                                    child: Icon(
+                                      isPengeluaran
+                                          ? Icons.trending_down_rounded
+                                          : Icons.trending_up_rounded,
+                                      color: Colors.white,
+                                      size: 32,
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          isPengeluaran
+                                              ? 'Tambah Pengeluaran'
+                                              : 'Tambah Pemasukan',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: -0.5,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          'Catat transaksi secara manual',
+                                          style: TextStyle(
+                                            color:
+                                                Colors.white.withOpacity(0.95),
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -323,78 +316,199 @@ class _TambahTransaksiPageState extends State<TambahTransaksiPage> {
                   ),
                 ),
 
+                // Smooth transition
+                Container(
+                  height: 20,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        gradientColors[2].withOpacity(0.1),
+                        Colors.grey[50]!,
+                      ],
+                    ),
+                  ),
+                ),
+
                 // Content
-                SliverPadding(
-                  padding: const EdgeInsets.all(20),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            // Kategori Field
-                            Text(
-                              'Kategori',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey[700],
-                              ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(20),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Kategori Field
+                          Text(
+                            'Kategori',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[800],
+                              letterSpacing: -0.3,
                             ),
-                            const SizedBox(height: 8),
-                            Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.grey[300]!),
-                              ),
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                                  value: _selectedKategoriId,
-                                  isExpanded: true,
-                                  hint: const Text('Pilih Kategori'),
-                                  items: _kategoris.map((kategori) {
-                                    return DropdownMenuItem<String>(
-                                      value: kategori['id'].toString(),
-                                      child:
-                                          Text(kategori['nama_kategori'] ?? ''),
-                                    );
-                                  }).toList(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _selectedKategoriId = value;
-                                    });
-                                  },
+                          ),
+                          const SizedBox(height: 10),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.05),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 2),
                                 ),
-                              ),
+                              ],
                             ),
-
-                            const SizedBox(height: 20),
-
-                            // Total Field
-                            Text(
-                              'Jumlah',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey[700],
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            TextFormField(
-                              controller: _totalCtrl,
-                              keyboardType: TextInputType.number,
+                            child: DropdownButtonFormField<String>(
+                              value: _selectedKategoriId,
+                              isExpanded: true,
                               decoration: InputDecoration(
-                                hintText: '0',
-                                prefixIcon: const Icon(Icons.attach_money),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 18,
+                                ),
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey[200]!,
+                                    width: 1,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey[200]!,
+                                    width: 1,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(
+                                    color: primaryColor,
+                                    width: 2,
+                                  ),
                                 ),
                                 filled: true,
                                 fillColor: Colors.white,
+                                prefixIcon: Icon(
+                                  Icons.category_outlined,
+                                  color: primaryColor,
+                                  size: 22,
+                                ),
+                              ),
+                              hint: Text(
+                                'Pilih Kategori',
+                                style: TextStyle(
+                                  color: Colors.grey[500],
+                                  fontSize: 15,
+                                ),
+                              ),
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: primaryColor,
+                                size: 28,
+                              ),
+                              style: TextStyle(
+                                color: Colors.grey[800],
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              items: _kategoris.map((kategori) {
+                                return DropdownMenuItem<String>(
+                                  value: kategori['id'].toString(),
+                                  child: Text(
+                                    kategori['nama_kategori'] ?? 'Kategori',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedKategoriId = value;
+                                });
+                              },
+                            ),
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // Total Field
+                          Text(
+                            'Jumlah',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[800],
+                              letterSpacing: -0.3,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.05),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: TextFormField(
+                              controller: _totalCtrl,
+                              keyboardType: TextInputType.number,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[800],
+                              ),
+                              decoration: InputDecoration(
+                                hintText: '0',
+                                hintStyle: TextStyle(
+                                  color: Colors.grey[400],
+                                  fontWeight: FontWeight.normal,
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.attach_money_rounded,
+                                  color: primaryColor,
+                                  size: 22,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey[200]!,
+                                    width: 1,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey[200]!,
+                                    width: 1,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(
+                                    color: primaryColor,
+                                    width: 2,
+                                  ),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 18,
+                                ),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -408,100 +522,221 @@ class _TambahTransaksiPageState extends State<TambahTransaksiPage> {
                                 return null;
                               },
                             ),
+                          ),
 
-                            const SizedBox(height: 20),
+                          const SizedBox(height: 20),
 
-                            // Tanggal Field
-                            Text(
-                              'Tanggal',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey[700],
-                              ),
+                          // Tanggal Field
+                          Text(
+                            'Tanggal',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[800],
+                              letterSpacing: -0.3,
                             ),
-                            const SizedBox(height: 8),
-                            TextFormField(
+                          ),
+                          const SizedBox(height: 10),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.05),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: TextFormField(
                               controller: _tanggalCtrl,
                               readOnly: true,
                               onTap: _selectDate,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey[800],
+                              ),
                               decoration: InputDecoration(
                                 hintText: 'Pilih Tanggal',
-                                prefixIcon: const Icon(Icons.calendar_today),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                hintStyle: TextStyle(
+                                  color: Colors.grey[400],
                                 ),
-                                filled: true,
-                                fillColor: Colors.white,
-                              ),
-                            ),
-
-                            const SizedBox(height: 20),
-
-                            // Deskripsi Field
-                            Text(
-                              'Deskripsi (Opsional)',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey[700],
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            TextFormField(
-                              controller: _deskripsiCtrl,
-                              maxLines: 3,
-                              decoration: InputDecoration(
-                                hintText: 'Tambahkan deskripsi...',
-                                prefixIcon: const Icon(Icons.description),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                prefixIcon: Icon(
+                                  Icons.calendar_today_outlined,
+                                  color: primaryColor,
+                                  size: 22,
                                 ),
-                                filled: true,
-                                fillColor: Colors.white,
-                              ),
-                            ),
-
-                            const SizedBox(height: 32),
-
-                            // Submit Button
-                            SizedBox(
-                              height: 52,
-                              child: ElevatedButton(
-                                onPressed: _isLoading ? null : _submit,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: isPengeluaran
-                                      ? Colors.red
-                                      : Color(0xFF0E8F6A),
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey[200]!,
+                                    width: 1,
                                   ),
                                 ),
-                                child: _isLoading
-                                    ? const SizedBox(
-                                        height: 20,
-                                        width: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                                  Colors.white),
-                                        ),
-                                      )
-                                    : Text(
-                                        'Simpan ${isPengeluaran ? 'Pengeluaran' : 'Pemasukan'}',
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey[200]!,
+                                    width: 1,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(
+                                    color: primaryColor,
+                                    width: 2,
+                                  ),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 18,
+                                ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // Catatan Field
+                          Text(
+                            'Catatan (Opsional)',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[800],
+                              letterSpacing: -0.3,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.05),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: TextFormField(
+                              controller: _catatanCtrl,
+                              maxLines: 3,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.grey[800],
+                              ),
+                              decoration: InputDecoration(
+                                hintText: 'Tambahkan catatan...',
+                                hintStyle: TextStyle(
+                                  color: Colors.grey[400],
+                                ),
+                                prefixIcon: Padding(
+                                  padding: const EdgeInsets.only(bottom: 50),
+                                  child: Icon(
+                                    Icons.note_outlined,
+                                    color: primaryColor,
+                                    size: 22,
+                                  ),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey[200]!,
+                                    width: 1,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey[200]!,
+                                    width: 1,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(
+                                    color: primaryColor,
+                                    width: 2,
+                                  ),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 18,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 32),
+
+                          // Submit Button
+                          Container(
+                            height: 56,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: primaryColor.withOpacity(0.3),
+                                  blurRadius: 15,
+                                  offset: const Offset(0, 8),
+                                  spreadRadius: 0,
+                                ),
+                              ],
+                            ),
+                            child: ElevatedButton(
+                              onPressed: _isLoading ? null : _submit,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: primaryColor,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                              child: _isLoading
+                                  ? const SizedBox(
+                                      height: 24,
+                                      width: 24,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.5,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                Colors.white),
+                                      ),
+                                    )
+                                  : Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(
+                                          Icons.check_circle_outline,
+                                          size: 22,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          'Simpan ${isPengeluaran ? 'Pengeluaran' : 'Pemasukan'}',
+                                          style: const TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: -0.3,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ]),
+                    ),
                   ),
                 ),
               ],

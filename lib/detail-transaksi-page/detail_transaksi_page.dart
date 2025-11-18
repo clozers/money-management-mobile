@@ -51,7 +51,7 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detail Transaksi'),
+        title: const Text('Detail Transaksi', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
         backgroundColor: const Color(0xFF0E8F6A),
         elevation: 0,
         leading: IconButton(
