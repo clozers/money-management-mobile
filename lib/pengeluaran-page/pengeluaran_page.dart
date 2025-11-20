@@ -201,395 +201,171 @@ class _PengeluaranPageState extends State<PengeluaranPage> {
         },
       ),
       backgroundColor: Colors.grey[50],
-      body: loading
-          ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              backgroundColor: const Color(0xFF0E8F6A),
-              color: Colors.white,
-              onRefresh: loadData,
-              child: CustomScrollView(
-                slivers: [
-                  // Header dengan statistik
-                  SliverToBoxAdapter(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            const Color(0xFF0E8F6A),
-                            const Color(0xFF14B885),
-                            const Color(0xFF1AD9A0),
-                          ],
-                        ),
-                        borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(30),
-                          bottomRight: Radius.circular(30),
-                        ),
-                      ),
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          // Dekorasi lingkaran dengan gradient yang smooth
-                          Positioned(
-                            top: -25,
-                            right: -25,
-                            child: Container(
-                              width: 80,
-                              height: 80,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: RadialGradient(
-                                  colors: [
-                                    const Color(0xFF1AD9A0).withOpacity(0.15),
-                                    const Color(0xFF14B885).withOpacity(0.08),
-                                    Colors.transparent,
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 15,
-                            left: -20,
-                            child: Container(
-                              width: 65,
-                              height: 65,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: RadialGradient(
-                                  colors: [
-                                    const Color(0xFF14B885).withOpacity(0.12),
-                                    const Color(0xFF0E8F6A).withOpacity(0.06),
-                                    Colors.transparent,
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            right: 35,
-                            child: Container(
-                              width: 45,
-                              height: 45,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: RadialGradient(
-                                  colors: [
-                                    const Color(0xFF1AD9A0).withOpacity(0.1),
-                                    Colors.transparent,
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          // Content
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.2),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Text(
-                                        'Total Pengeluaran',
-                                        style: TextStyle(
-                                          color: Colors.white.withOpacity(0.95),
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                          letterSpacing: 0.5,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 12),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            currencyFormat
-                                                .format(totalPengeluaran),
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 36,
-                                              fontWeight: FontWeight.bold,
-                                              letterSpacing: -1,
-                                              height: 1.1,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Row(
-                                            children: [
-                                              Icon(
-                                                Icons.trending_down,
-                                                color: Colors.white
-                                                    .withOpacity(0.8),
-                                                size: 16,
-                                              ),
-                                              const SizedBox(width: 4),
-                                              Text(
-                                                '${pengeluarans.length} transaksi',
-                                                style: TextStyle(
-                                                  color: Colors.white
-                                                      .withOpacity(0.8),
-                                                  fontSize: 13,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.all(16),
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            Colors.white.withOpacity(0.25),
-                                            Colors.white.withOpacity(0.15),
-                                          ],
-                                        ),
-                                        borderRadius: BorderRadius.circular(16),
-                                        border: Border.all(
-                                          color: Colors.white.withOpacity(0.3),
-                                          width: 1,
-                                        ),
-                                      ),
-                                      child: const Icon(
-                                        Icons.receipt_long,
-                                        color: Colors.white,
-                                        size: 32,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+      body: Stack(
+        children: [
+          // Main content
+          loading
+              ? const Center(child: CircularProgressIndicator())
+              : RefreshIndicator(
+                  backgroundColor: const Color(0xFF0E8F6A),
+                  color: Colors.white,
+                  onRefresh: loadData,
+                  child: CustomScrollView(
+                    slivers: [
+                      // Header dengan statistik
+                      SliverToBoxAdapter(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                const Color(0xFF0E8F6A),
+                                const Color(0xFF14B885),
+                                const Color(0xFF1AD9A0),
                               ],
                             ),
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(30),
+                              bottomRight: Radius.circular(30),
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // List transaksi
-                  if (pengeluarans.isEmpty)
-                    SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(24),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.1),
-                                    blurRadius: 20,
-                                    spreadRadius: 5,
-                                  ),
-                                ],
-                              ),
-                              child: Icon(
-                                Icons.receipt_long_outlined,
-                                size: 64,
-                                color: Colors.grey[300],
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                            Text(
-                              'Belum ada pengeluaran',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey[700],
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Mulai catat pengeluaran Anda',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[500],
-                              ),
-                            ),
-                            const SizedBox(height: 32),
-                            ElevatedButton.icon(
-                              onPressed: _showAddTransactionDialog,
-                              icon: const Icon(Icons.add),
-                              label: const Text('Tambah Pengeluaran'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF0E8F6A),
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 12,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  else
-                    SliverPadding(
-                      padding: const EdgeInsets.all(20),
-                      sliver: SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            final item = pengeluarans[index];
-                            final kategoriNama = item['kategori']
-                                    ?['nama_kategori'] ??
-                                'Tidak ada kategori';
-                            final judul = item['judul'];
-                            final tanggal = formatTanggal(item['tanggal']);
-                            final total =
-                                double.tryParse(item['total'].toString()) ?? 0;
-
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 16),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.03),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                    spreadRadius: 0,
-                                  ),
-                                ],
-                              ),
-                              child: Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  onTap: () async {
-                                    final result = await Navigator.pushNamed(
-                                      context,
-                                      '/detail-transaksi',
-                                      arguments: {'id': item['id']},
-                                    );
-                                    // Refresh data jika transaksi dihapus
-                                    if (result == true) {
-                                      loadData();
-                                    }
-                                  },
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 20,
-                                      vertical: 18,
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              // Dekorasi lingkaran dengan gradient yang smooth
+                              Positioned(
+                                top: -25,
+                                right: -25,
+                                child: Container(
+                                  width: 80,
+                                  height: 80,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: RadialGradient(
+                                      colors: [
+                                        const Color(0xFF1AD9A0)
+                                            .withOpacity(0.15),
+                                        const Color(0xFF14B885)
+                                            .withOpacity(0.08),
+                                        Colors.transparent,
+                                      ],
                                     ),
-                                    child: Row(
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                top: 15,
+                                left: -20,
+                                child: Container(
+                                  width: 65,
+                                  height: 65,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: RadialGradient(
+                                      colors: [
+                                        const Color(0xFF14B885)
+                                            .withOpacity(0.12),
+                                        const Color(0xFF0E8F6A)
+                                            .withOpacity(0.06),
+                                        Colors.transparent,
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                top: 0,
+                                right: 35,
+                                child: Container(
+                                  width: 45,
+                                  height: 45,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: RadialGradient(
+                                      colors: [
+                                        const Color(0xFF1AD9A0)
+                                            .withOpacity(0.1),
+                                        Colors.transparent,
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              // Content
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(20, 16, 20, 32),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Row(
                                       children: [
-                                        // Icon kategori dengan gradient yang lebih menarik
                                         Container(
-                                          width: 50,
-                                          height: 50,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 4,
+                                          ),
                                           decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                              begin: Alignment.topLeft,
-                                              end: Alignment.bottomRight,
-                                              colors: [
-                                                const Color(0xFF0E8F6A),
-                                                const Color(0xFF14B885),
-                                              ],
-                                            ),
+                                            color:
+                                                Colors.white.withOpacity(0.2),
                                             borderRadius:
                                                 BorderRadius.circular(12),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: const Color(0xFF0E8F6A)
-                                                    .withOpacity(0.15),
-                                                blurRadius: 6,
-                                                offset: const Offset(0, 3),
-                                              ),
-                                            ],
                                           ),
-                                          child: const Icon(
-                                            Icons.receipt_long_rounded,
-                                            color: Colors.white,
-                                            size: 24,
+                                          child: Text(
+                                            'Total Pengeluaran',
+                                            style: TextStyle(
+                                              color: Colors.white
+                                                  .withOpacity(0.95),
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                              letterSpacing: 0.5,
+                                            ),
                                           ),
                                         ),
-                                        const SizedBox(width: 20),
-                                        // Info transaksi
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              // Judul transaksi (jika ada)
-                                              if (judul != null &&
-                                                  judul.toString().isNotEmpty)
-                                                Text(
-                                                  judul.toString(),
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: Colors.black87,
-                                                    letterSpacing: -0.1,
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                )
-                                              else
-                                                Text(
-                                                  kategoriNama,
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: Colors.black87,
-                                                    letterSpacing: -0.1,
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                                              Text(
+                                                currencyFormat
+                                                    .format(totalPengeluaran),
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 36,
+                                                  fontWeight: FontWeight.bold,
+                                                  letterSpacing: -1,
+                                                  height: 1.1,
                                                 ),
-                                              const SizedBox(height: 10),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              const SizedBox(height: 8),
                                               Row(
                                                 children: [
                                                   Icon(
-                                                    Icons.calendar_today,
-                                                    size: 13,
-                                                    color: Colors.grey[400],
+                                                    Icons.trending_down,
+                                                    color: Colors.white
+                                                        .withOpacity(0.8),
+                                                    size: 16,
                                                   ),
-                                                  const SizedBox(width: 8),
+                                                  const SizedBox(width: 4),
                                                   Text(
-                                                    tanggal,
+                                                    '${pengeluarans.length} transaksi',
                                                     style: TextStyle(
+                                                      color: Colors.white
+                                                          .withOpacity(0.8),
                                                       fontSize: 13,
-                                                      color: Colors.grey[500],
-                                                      fontWeight:
-                                                          FontWeight.w400,
                                                     ),
                                                   ),
                                                 ],
@@ -597,31 +373,292 @@ class _PengeluaranPageState extends State<PengeluaranPage> {
                                             ],
                                           ),
                                         ),
-                                        const SizedBox(width: 16),
-                                        // Total dengan style yang lebih clean
-                                        Text(
-                                          currencyFormat.format(total),
-                                          style: const TextStyle(
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.red,
-                                            letterSpacing: -0.1,
+                                        Container(
+                                          padding: const EdgeInsets.all(16),
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                              colors: [
+                                                Colors.white.withOpacity(0.25),
+                                                Colors.white.withOpacity(0.15),
+                                              ],
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(16),
+                                            border: Border.all(
+                                              color:
+                                                  Colors.white.withOpacity(0.3),
+                                              width: 1,
+                                            ),
+                                          ),
+                                          child: const Icon(
+                                            Icons.receipt_long,
+                                            color: Colors.white,
+                                            size: 32,
                                           ),
                                         ),
                                       ],
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ),
-                            );
-                          },
-                          childCount: pengeluarans.length,
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                ],
-              ),
+
+                      // List transaksi
+                      if (pengeluarans.isEmpty)
+                        SliverFillRemaining(
+                          hasScrollBody: false,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(24),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.1),
+                                        blurRadius: 20,
+                                        spreadRadius: 5,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Icon(
+                                    Icons.receipt_long_outlined,
+                                    size: 64,
+                                    color: Colors.grey[300],
+                                  ),
+                                ),
+                                const SizedBox(height: 24),
+                                Text(
+                                  'Belum ada pengeluaran',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey[700],
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Mulai catat pengeluaran Anda',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey[500],
+                                  ),
+                                ),
+                                const SizedBox(height: 32),
+                                ElevatedButton.icon(
+                                  onPressed: _showAddTransactionDialog,
+                                  icon: const Icon(Icons.add),
+                                  label: const Text('Tambah Pengeluaran'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF0E8F6A),
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24,
+                                      vertical: 12,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      else
+                        SliverPadding(
+                          padding: const EdgeInsets.all(20),
+                          sliver: SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                                final item = pengeluarans[index];
+                                final kategoriNama = item['kategori']
+                                        ?['nama_kategori'] ??
+                                    'Tidak ada kategori';
+                                final judul = item['judul'];
+                                final tanggal = formatTanggal(item['tanggal']);
+                                final total =
+                                    double.tryParse(item['total'].toString()) ??
+                                        0;
+
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.03),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                        spreadRadius: 0,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      onTap: () async {
+                                        final result =
+                                            await Navigator.pushNamed(
+                                          context,
+                                          '/detail-transaksi',
+                                          arguments: {'id': item['id']},
+                                        );
+                                        // Refresh data jika transaksi dihapus
+                                        if (result == true) {
+                                          loadData();
+                                        }
+                                      },
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 20,
+                                          vertical: 18,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            // Icon kategori dengan gradient yang lebih menarik
+                                            Container(
+                                              width: 50,
+                                              height: 50,
+                                              decoration: BoxDecoration(
+                                                gradient: LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                  colors: [
+                                                    const Color(0xFF0E8F6A),
+                                                    const Color(0xFF14B885),
+                                                  ],
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color:
+                                                        const Color(0xFF0E8F6A)
+                                                            .withOpacity(0.15),
+                                                    blurRadius: 6,
+                                                    offset: const Offset(0, 3),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: const Icon(
+                                                Icons.receipt_long_rounded,
+                                                color: Colors.white,
+                                                size: 24,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 20),
+                                            // Info transaksi
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  // Judul transaksi (jika ada)
+                                                  if (judul != null &&
+                                                      judul
+                                                          .toString()
+                                                          .isNotEmpty)
+                                                    Text(
+                                                      judul.toString(),
+                                                      style: const TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: Colors.black87,
+                                                        letterSpacing: -0.1,
+                                                      ),
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    )
+                                                  else
+                                                    Text(
+                                                      kategoriNama,
+                                                      style: const TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: Colors.black87,
+                                                        letterSpacing: -0.1,
+                                                      ),
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  const SizedBox(height: 10),
+                                                  Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.calendar_today,
+                                                        size: 13,
+                                                        color: Colors.grey[400],
+                                                      ),
+                                                      const SizedBox(width: 8),
+                                                      Text(
+                                                        tanggal,
+                                                        style: TextStyle(
+                                                          fontSize: 13,
+                                                          color:
+                                                              Colors.grey[500],
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(width: 16),
+                                            // Total dengan style yang lebih clean
+                                            Text(
+                                              currencyFormat.format(total),
+                                              style: const TextStyle(
+                                                fontSize: 17,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.red,
+                                                letterSpacing: -0.1,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              childCount: pengeluarans.length,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+          // Floating Action Button
+          Positioned(
+            right: 20,
+            bottom:
+                30, // Lebih tinggi dari bottom navigation (kira-kira 80px dari bawah)
+            child: FloatingActionButton(
+              onPressed: _showAddTransactionDialog,
+              backgroundColor: const Color(0xFF0E8F6A),
+              elevation: 6,
+              child: const Icon(Icons.add, color: Colors.white, size: 28),
             ),
+          ),
+        ],
+      ),
     );
   }
 }

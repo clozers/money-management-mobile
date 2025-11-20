@@ -107,110 +107,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _showAddTransactionDialog() {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Tambah Transaksi',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 24),
-              // Scan Nota Option
-              ListTile(
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                leading: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Color(0xFF0E8F6A).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.scanner,
-                    color: Color(0xFF0E8F6A),
-                  ),
-                ),
-                title: const Text(
-                  'Scan Nota',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                subtitle:
-                    const Text('Upload foto struk untuk deteksi otomatis'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/scan-struk');
-                },
-              ),
-              const SizedBox(height: 8),
-              // Tambah Manual - Pengeluaran
-              ListTile(
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                leading: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.trending_down,
-                    color: Colors.red,
-                  ),
-                ),
-                title: const Text(
-                  'Tambah Pengeluaran',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                subtitle: const Text('Catat pengeluaran secara manual'),
-                onTap: () async {
-                  Navigator.pop(context);
-                  final result = await Navigator.pushNamed(
-                    context,
-                    '/tambah-transaksi',
-                    arguments: {'jenis': 'pengeluaran'},
-                  );
-                  if (result == true) {
-                    loadData(); // Refresh data
-                  }
-                },
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final sisaGaji = totalGaji - totalBulan;
@@ -375,20 +271,22 @@ class _HomePageState extends State<HomePage> {
                                           Row(
                                             children: [
                                               Icon(
-                                                sisaGaji >= 0
-                                                    ? Icons.arrow_upward
-                                                    : Icons.arrow_downward,
+                                                Icons.celebration,
                                                 color: Colors.white
-                                                    .withOpacity(0.8),
-                                                size: 16,
+                                                    .withOpacity(0.9),
+                                                size: 18,
                                               ),
-                                              const SizedBox(width: 4),
-                                              Text(
-                                                'Dari gaji bulan ini',
-                                                style: TextStyle(
-                                                  color: Colors.white
-                                                      .withOpacity(0.8),
-                                                  fontSize: 13,
+                                              const SizedBox(width: 6),
+                                              Flexible(
+                                                child: Text(
+                                                  'Masih tersisa untuk kebutuhanmu',
+                                                  style: TextStyle(
+                                                    color: Colors.white
+                                                        .withOpacity(0.95),
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.w500,
+                                                    letterSpacing: 0.2,
+                                                  ),
                                                 ),
                                               ),
                                             ],
@@ -536,77 +434,72 @@ class _HomePageState extends State<HomePage> {
 
                           const SizedBox(height: 24),
 
-                          // ================= Quick Action Card =================
+                          // ================= Motivational Section =================
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Container(
-                              padding: const EdgeInsets.all(16),
+                              padding: const EdgeInsets.all(24),
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                   colors: [
-                                    Color(0xFF0E8F6A).withOpacity(0.1),
-                                    Color(0xFF14B885).withOpacity(0.1),
+                                    const Color(0xFF0E8F6A).withOpacity(0.08),
+                                    const Color(0xFF14B885).withOpacity(0.05),
                                   ],
                                 ),
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                  color: Color(0xFF0E8F6A).withOpacity(0.2),
+                                  color:
+                                      const Color(0xFF0E8F6A).withOpacity(0.15),
                                   width: 1,
                                 ),
                               ),
                               child: Row(
                                 children: [
                                   Container(
-                                    padding: const EdgeInsets.all(12),
+                                    padding: const EdgeInsets.all(16),
                                     decoration: BoxDecoration(
-                                      color:
-                                          Color(0xFF0E8F6A).withOpacity(0.15),
-                                      borderRadius: BorderRadius.circular(12),
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: [
+                                          const Color(0xFF0E8F6A),
+                                          const Color(0xFF14B885),
+                                        ],
+                                      ),
+                                      borderRadius: BorderRadius.circular(16),
                                     ),
                                     child: const Icon(
-                                      Icons.scanner,
-                                      color: Color(0xFF0E8F6A),
-                                      size: 24,
+                                      Icons.insights,
+                                      color: Colors.white,
+                                      size: 32,
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
+                                  const SizedBox(width: 20),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        const Text(
-                                          'Scan Struk Otomatis',
+                                        Text(
+                                          'Kelola Keuangan dengan Bijak',
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.black87,
+                                            color: Colors.grey[800],
                                           ),
                                         ),
-                                        const SizedBox(height: 4),
+                                        const SizedBox(height: 6),
                                         Text(
-                                          'Upload foto struk untuk deteksi otomatis',
+                                          'Setiap transaksi yang kamu catat adalah langkah menuju kebebasan finansial',
                                           style: TextStyle(
+                                            fontSize: 13,
                                             color: Colors.grey[600],
-                                            fontSize: 12,
+                                            height: 1.4,
                                           ),
                                         ),
                                       ],
-                                    ),
-                                  ),
-                                  ElevatedButton.icon(
-                                    onPressed: () => Navigator.pushNamed(
-                                        context, '/scan-struk'),
-                                    icon:
-                                        const Icon(Icons.camera_alt, size: 18),
-                                    label: const Text('Scan'),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Color(0xFF0E8F6A),
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 10),
                                     ),
                                   ),
                                 ],
@@ -616,7 +509,69 @@ class _HomePageState extends State<HomePage> {
 
                           const SizedBox(height: 24),
 
-                          // ================= Transaksi Section =================
+                          // ================= Quick Actions =================
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Catat Transaksi',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey[800],
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Pilih cara mencatat transaksi: scan struk otomatis atau input manual',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: _buildQuickActionButton(
+                                        context,
+                                        icon: Icons.camera_alt,
+                                        label: 'Scan Struk',
+                                        color: const Color(0xFF0E8F6A),
+                                        onTap: () => Navigator.pushNamed(
+                                            context, '/scan-struk'),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: _buildQuickActionButton(
+                                        context,
+                                        icon: Icons.add,
+                                        label: 'Tambah Manual',
+                                        color: Colors.orange.shade600,
+                                        onTap: () async {
+                                          final result =
+                                              await Navigator.pushNamed(
+                                            context,
+                                            '/tambah-transaksi',
+                                            arguments: {'jenis': 'pengeluaran'},
+                                          );
+                                          if (result == true) {
+                                            loadData();
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 24),
+
                           // Analisis Card
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -761,7 +716,7 @@ class _HomePageState extends State<HomePage> {
                                       'Mulai catat pengeluaran Anda',
                                       style: TextStyle(
                                         color: Colors.grey[400],
-                                        fontSize: 14,
+                                        fontSize: 13,
                                       ),
                                     ),
                                   ],
@@ -938,13 +893,6 @@ class _HomePageState extends State<HomePage> {
           if (index == 2) Navigator.pushReplacementNamed(context, '/akun');
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showAddTransactionDialog,
-        backgroundColor: const Color(0xFF0E8F6A),
-        elevation: 4,
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
@@ -1000,6 +948,63 @@ class _HomePageState extends State<HomePage> {
             overflow: TextOverflow.ellipsis,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildQuickActionButton(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  icon,
+                  color: color,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[800],
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
