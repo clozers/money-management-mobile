@@ -19,6 +19,7 @@ class EditTransaksiPage extends StatefulWidget {
 
 class _EditTransaksiPageState extends State<EditTransaksiPage> {
   final _formKey = GlobalKey<FormState>();
+  final _judulCtrl = TextEditingController();
   final _totalCtrl = TextEditingController();
   final _catatanCtrl = TextEditingController();
   final _tanggalCtrl = TextEditingController();
@@ -57,6 +58,7 @@ class _EditTransaksiPageState extends State<EditTransaksiPage> {
 
         // Set data ke form
         if (_detail != null) {
+          _judulCtrl.text = _detail!['judul'] ?? '';
           _totalCtrl.text = _detail!['total']?.toString() ?? '';
           _catatanCtrl.text = _detail!['catatan'] ?? '';
 
@@ -205,6 +207,7 @@ class _EditTransaksiPageState extends State<EditTransaksiPage> {
         _totalCtrl.text.replaceAll(RegExp(r'[^\d]'), ''),
         _tanggalCtrl.text,
         _catatanCtrl.text.isEmpty ? null : _catatanCtrl.text,
+        _judulCtrl.text.isEmpty ? null : _judulCtrl.text.trim(),
       );
 
       setState(() => _isLoading = false);
@@ -238,6 +241,7 @@ class _EditTransaksiPageState extends State<EditTransaksiPage> {
 
   @override
   void dispose() {
+    _judulCtrl.dispose();
     _totalCtrl.dispose();
     _catatanCtrl.dispose();
     _tanggalCtrl.dispose();
@@ -976,6 +980,59 @@ class _EditTransaksiPageState extends State<EditTransaksiPage> {
                               ),
                             ],
                           ),
+                          const SizedBox(height: 32),
+
+                          // Judul Field - Clean & Minimal
+                          TextFormField(
+                            controller: _judulCtrl,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey[800],
+                            ),
+                            decoration: InputDecoration(
+                              labelText: 'Judul Transaksi (Opsional)',
+                              labelStyle: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 15,
+                              ),
+                              hintText: 'Contoh: Beli smartwatch',
+                              hintStyle: TextStyle(
+                                color: Colors.grey[400],
+                              ),
+                              prefixIcon: Icon(
+                                Icons.title,
+                                color: Colors.grey[600],
+                                size: 22,
+                              ),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.grey[300]!,
+                                  width: 1,
+                                ),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: primaryColor,
+                                  width: 2,
+                                ),
+                              ),
+                              errorBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.red.shade300,
+                                  width: 1,
+                                ),
+                              ),
+                              focusedErrorBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.red.shade300,
+                                  width: 2,
+                                ),
+                              ),
+                              errorStyle: TextStyle(color: Colors.red.shade700),
+                            ),
+                          ),
+
                           const SizedBox(height: 32),
                           TextFormField(
                             controller: _totalCtrl,

@@ -289,6 +289,7 @@ class ApiService {
     String total,
     String? tanggal,
     String? catatan,
+    String? judul,
   ) async {
     // Convert total to number
     final totalValue =
@@ -298,12 +299,13 @@ class ApiService {
     final tanggalValue =
         tanggal ?? DateTime.now().toIso8601String().split('T')[0];
 
-    // Build body sesuai format API: kategori_id, tanggal, total, catatan
+    // Build body sesuai format API: kategori_id, tanggal, total, catatan, judul
     final body = jsonEncode({
       'kategori_id': int.tryParse(kategoriId) ?? 0,
       'tanggal': tanggalValue,
       'total': totalValue,
       if (catatan != null && catatan.isNotEmpty) 'catatan': catatan,
+      if (judul != null && judul.isNotEmpty) 'judul': judul,
     });
 
     print('Tambah transaksi request body: $body');
@@ -364,6 +366,7 @@ class ApiService {
     String total,
     String? tanggal,
     String? catatan,
+    String? judul,
   ) async {
     // Convert total to number
     final totalValue =
@@ -373,12 +376,13 @@ class ApiService {
     final tanggalValue =
         tanggal ?? DateTime.now().toIso8601String().split('T')[0];
 
-    // Build body sesuai format API: kategori_id, tanggal, total, catatan
+    // Build body sesuai format API: kategori_id, tanggal, total, catatan, judul
     final body = jsonEncode({
       'kategori_id': int.tryParse(kategoriId) ?? 0,
       'tanggal': tanggalValue,
       'total': totalValue,
       if (catatan != null && catatan.isNotEmpty) 'catatan': catatan,
+      if (judul != null && judul.isNotEmpty) 'judul': judul,
     });
 
     print('Update transaksi request body: $body');

@@ -301,6 +301,19 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                                     'Tidak ada kategori',
                               ),
                               const Divider(),
+                              _buildInfoRow(
+                                'Tanggal',
+                                _detail!['tanggal'] ?? '-',
+                              ),
+                              if (_detail!['filename'] != null) ...[
+                                const Divider(),
+                                _buildInfoRow(
+                                  'Nota',
+                                  'Tersedia',
+                                  valueColor: Colors.green,
+                                ),
+                              ],
+                              const Divider(),
                               _buildInfoRowWithNote(
                                 'Catatan',
                                 _detail!['catatan'] != null &&
@@ -316,19 +329,6 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                                     ? Colors.black87
                                     : Colors.grey[400],
                               ),
-                              const Divider(),
-                              _buildInfoRow(
-                                'Tanggal',
-                                _detail!['tanggal'] ?? '-',
-                              ),
-                              if (_detail!['filename'] != null) ...[
-                                const Divider(),
-                                _buildInfoRow(
-                                  'Nota',
-                                  'Tersedia',
-                                  valueColor: Colors.green,
-                                ),
-                              ],
                             ],
                           ),
                         ),
@@ -629,7 +629,7 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
             style: TextStyle(
               color: valueColor ?? Colors.black87,
               fontSize: 14,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w400,
             ),
           ),
         ],
