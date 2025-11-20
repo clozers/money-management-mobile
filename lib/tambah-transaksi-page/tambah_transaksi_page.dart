@@ -217,41 +217,57 @@ class _TambahTransaksiPageState extends State<TambahTransaksiPage> {
                     ),
                     child: Material(
                       color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            _selectedKategoriId = kategoriId;
-                          });
-                          Navigator.pop(context);
-                        },
-                        borderRadius: BorderRadius.circular(16),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  namaKategori,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: isSelected
-                                        ? FontWeight.w600
-                                        : FontWeight.w500,
-                                    color: isSelected
-                                        ? pickerPrimaryColor
-                                        : Colors.grey[800],
-                                  ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _selectedKategoriId = kategoriId;
+                                });
+                                Navigator.pop(context);
+                              },
+                              borderRadius: BorderRadius.circular(16),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        namaKategori,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: isSelected
+                                              ? FontWeight.w600
+                                              : FontWeight.w500,
+                                          color: isSelected
+                                              ? pickerPrimaryColor
+                                              : Colors.grey[800],
+                                        ),
+                                      ),
+                                    ),
+                                    if (isSelected)
+                                      Icon(
+                                        Icons.check_circle,
+                                        color: pickerPrimaryColor,
+                                        size: 24,
+                                      ),
+                                  ],
                                 ),
                               ),
-                              if (isSelected)
-                                Icon(
-                                  Icons.check_circle,
-                                  color: pickerPrimaryColor,
-                                  size: 24,
-                                ),
-                            ],
+                            ),
                           ),
-                        ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.delete_outline,
+                              color: Colors.red,
+                              size: 20,
+                            ),
+                            onPressed: () =>
+                                _deleteKategori(kategoriId, namaKategori),
+                            tooltip: 'Hapus Kategori',
+                          ),
+                        ],
                       ),
                     ),
                   );
@@ -263,6 +279,121 @@ class _TambahTransaksiPageState extends State<TambahTransaksiPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _deleteKategori(String kategoriId, String namaKategori) async {
+    // Konfirmasi delete
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.red.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.delete_outline,
+                color: Colors.red,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                'Hapus Kategori',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          'Apakah Anda yakin ingin menghapus kategori "$namaKategori"? Tindakan ini tidak dapat dibatalkan.',
+          style: const TextStyle(fontSize: 15),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(
+              'Batal',
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: const Text('Hapus'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    // Show loading
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    // Delete kategori
+    final success = await ApiService.deleteKategori(
+      _token!,
+      kategoriId,
+    );
+
+    // Close loading
+    if (mounted) Navigator.pop(context);
+
+    if (success) {
+      // Jika kategori yang dihapus adalah kategori yang sedang dipilih, reset selection
+      if (_selectedKategoriId == kategoriId) {
+        setState(() {
+          _selectedKategoriId = null;
+        });
+      }
+
+      // Refresh list kategori
+      await _loadKategori();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Kategori berhasil dihapus'),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Gagal menghapus kategori'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _showTambahKategoriDialog() async {

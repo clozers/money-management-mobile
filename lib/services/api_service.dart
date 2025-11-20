@@ -255,6 +255,32 @@ class ApiService {
     }
   }
 
+  // 🗑️ DELETE KATEGORI
+  static Future<bool> deleteKategori(String token, String kategoriId) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('$baseUrl/kategori/$kategoriId'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      print('Delete kategori response status: ${response.statusCode}');
+      print('Delete kategori response body: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        return true;
+      } else {
+        print('Delete kategori error: ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      print('Delete kategori exception: $e');
+      return false;
+    }
+  }
+
   // ➕ TAMBAH TRANSAKSI MANUAL
   static Future<Map<String, dynamic>?> tambahTransaksi(
     String token,
