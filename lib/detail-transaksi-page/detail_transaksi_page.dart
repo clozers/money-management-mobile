@@ -489,28 +489,72 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
 
                         const SizedBox(height: 32),
 
-                        // Hapus Transaksi Button
-                        Center(
-                          child: TextButton(
-                            onPressed: _deleteTransaksi,
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 12,
+                        // Edit & Hapus Transaksi Buttons
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: TextButton(
+                                  onPressed: () async {
+                                    final result = await Navigator.pushNamed(
+                                      context,
+                                      '/edit-transaksi',
+                                      arguments: {
+                                        'id': widget.transaksiId,
+                                        'detail': _detail,
+                                      },
+                                    );
+                                    // Refresh data jika transaksi diupdate
+                                    if (result == true) {
+                                      _loadDetail();
+                                    }
+                                  },
+                                  style: TextButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 12,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Edit Transaksi',
+                                    style: TextStyle(
+                                      color: const Color(0xFF0E8F6A),
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
                               ),
-                            ),
-                            child: Text(
-                              'Hapus Transaksi',
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                              const SizedBox(width: 12),
+                              Flexible(
+                                child: TextButton(
+                                  onPressed: _deleteTransaksi,
+                                  style: TextButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 12,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Hapus Transaksi',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
                         ),
 
-                        const SizedBox(height: 100),
+                        SizedBox(
+                            height: MediaQuery.of(context).padding.bottom + 20),
                       ],
                     ),
                   ),

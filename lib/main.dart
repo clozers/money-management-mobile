@@ -8,6 +8,7 @@ import 'pengeluaran-page/pengeluaran_page.dart';
 import 'scan-struk-page/scan_struk_page.dart';
 import 'tambah-transaksi-page/tambah_transaksi_page.dart';
 import 'detail-transaksi-page/detail_transaksi_page.dart';
+import 'edit-transaksi-page/edit_transaksi_page.dart';
 import 'detail-profil-page/detail_profil_page.dart';
 
 void main() {
@@ -43,6 +44,13 @@ class MyApp extends StatelessWidget {
           final args = ModalRoute.of(context)!.settings.arguments as Map?;
           return DetailTransaksiPage(
             transaksiId: args?['id']?.toString() ?? '',
+          );
+        },
+        '/edit-transaksi': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as Map?;
+          return EditTransaksiPage(
+            transaksiId: args?['id']?.toString() ?? '',
+            detail: args?['detail'] as Map<String, dynamic>?,
           );
         },
         '/detail-profil': (context) => const DetailProfilPage(),

@@ -356,6 +356,54 @@ class ApiService {
     }
   }
 
+  // ✏️ UPDATE TRANSAKSI
+  static Future<Map<String, dynamic>?> updateTransaksi(
+    String token,
+    String transaksiId,
+    String kategoriId,
+    String total,
+    String? tanggal,
+    String? catatan,
+  ) async {
+    // Convert total to number
+    final totalValue =
+        double.tryParse(total.replaceAll(RegExp(r'[^\d]'), '')) ?? 0;
+
+    // Format tanggal
+    final tanggalValue =
+        tanggal ?? DateTime.now().toIso8601String().split('T')[0];
+
+    // Build body sesuai format API: kategori_id, tanggal, total, catatan
+    final body = jsonEncode({
+      'kategori_id': int.tryParse(kategoriId) ?? 0,
+      'tanggal': tanggalValue,
+      'total': totalValue,
+      if (catatan != null && catatan.isNotEmpty) 'catatan': catatan,
+    });
+
+    print('Update transaksi request body: $body');
+
+    final response = await http.put(
+      Uri.parse('$baseUrl/transaksi/$transaksiId'),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: body,
+    );
+
+    print('Update transaksi response status: ${response.statusCode}');
+    print('Update transaksi response body: ${response.body}');
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return jsonDecode(response.body);
+    } else {
+      print('Update transaksi error: ${response.body}');
+      return null;
+    }
+  }
+
   // 📄 GET DETAIL TRANSAKSI
   static Future<Map<String, dynamic>?> getDetailTransaksi(
       String token, String transaksiId) async {
