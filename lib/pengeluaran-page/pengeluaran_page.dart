@@ -212,198 +212,112 @@ class _PengeluaranPageState extends State<PengeluaranPage> {
                   onRefresh: loadData,
                   child: CustomScrollView(
                     slivers: [
-                      // Header dengan statistik
+                      // Header dengan statistik - Modern Card Design
                       SliverToBoxAdapter(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                const Color(0xFF0E8F6A),
-                                const Color(0xFF14B885),
-                                const Color(0xFF1AD9A0),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                          child: Container(
+                            padding: const EdgeInsets.all(24),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(24),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.08),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 8),
+                                  spreadRadius: 0,
+                                ),
                               ],
                             ),
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(30),
-                              bottomRight: Radius.circular(30),
-                            ),
-                          ),
-                          child: Stack(
-                            clipBehavior: Clip.none,
-                            children: [
-                              // Dekorasi lingkaran dengan gradient yang smooth
-                              Positioned(
-                                top: -25,
-                                right: -25,
-                                child: Container(
-                                  width: 80,
-                                  height: 80,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    gradient: RadialGradient(
-                                      colors: [
-                                        const Color(0xFF1AD9A0)
-                                            .withOpacity(0.15),
-                                        const Color(0xFF14B885)
-                                            .withOpacity(0.08),
-                                        Colors.transparent,
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                top: 15,
-                                left: -20,
-                                child: Container(
-                                  width: 65,
-                                  height: 65,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    gradient: RadialGradient(
-                                      colors: [
-                                        const Color(0xFF14B885)
-                                            .withOpacity(0.12),
-                                        const Color(0xFF0E8F6A)
-                                            .withOpacity(0.06),
-                                        Colors.transparent,
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                top: 0,
-                                right: 35,
-                                child: Container(
-                                  width: 45,
-                                  height: 45,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    gradient: RadialGradient(
-                                      colors: [
-                                        const Color(0xFF1AD9A0)
-                                            .withOpacity(0.1),
-                                        Colors.transparent,
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              // Content
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(20, 16, 20, 32),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
                                   children: [
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                            vertical: 4,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color:
-                                                Colors.white.withOpacity(0.2),
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          ),
-                                          child: Text(
+                                    Container(
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                          colors: [
+                                            const Color(0xFF0E8F6A),
+                                            const Color(0xFF14B885),
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: const Icon(
+                                        Icons.receipt_long,
+                                        color: Colors.white,
+                                        size: 24,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
                                             'Total Pengeluaran',
                                             style: TextStyle(
-                                              color: Colors.white
-                                                  .withOpacity(0.95),
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                              letterSpacing: 0.5,
+                                              color: Colors.grey[600],
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w500,
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                currencyFormat
-                                                    .format(totalPengeluaran),
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 36,
-                                                  fontWeight: FontWeight.bold,
-                                                  letterSpacing: -1,
-                                                  height: 1.1,
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.trending_down,
-                                                    color: Colors.white
-                                                        .withOpacity(0.8),
-                                                    size: 16,
-                                                  ),
-                                                  const SizedBox(width: 4),
-                                                  Text(
-                                                    '${pengeluarans.length} transaksi',
-                                                    style: TextStyle(
-                                                      color: Colors.white
-                                                          .withOpacity(0.8),
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Container(
-                                          padding: const EdgeInsets.all(16),
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                              begin: Alignment.topLeft,
-                                              end: Alignment.bottomRight,
-                                              colors: [
-                                                Colors.white.withOpacity(0.25),
-                                                Colors.white.withOpacity(0.15),
-                                              ],
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            currencyFormat
+                                                .format(totalPengeluaran),
+                                            style: const TextStyle(
+                                              color: Colors.black87,
+                                              fontSize: 32,
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: -0.5,
+                                              height: 1.1,
                                             ),
-                                            borderRadius:
-                                                BorderRadius.circular(16),
-                                            border: Border.all(
-                                              color:
-                                                  Colors.white.withOpacity(0.3),
-                                              width: 1,
-                                            ),
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                          child: const Icon(
-                                            Icons.receipt_long,
-                                            color: Colors.white,
-                                            size: 32,
-                                          ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 16),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.trending_down,
+                                        color: Colors.red[600],
+                                        size: 16,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        '${pengeluarans.length} transaksi',
+                                        style: TextStyle(
+                                          color: Colors.red[700],
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -475,7 +389,7 @@ class _PengeluaranPageState extends State<PengeluaranPage> {
                         )
                       else
                         SliverPadding(
-                          padding: const EdgeInsets.all(20),
+                          padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
                           sliver: SliverList(
                             delegate: SliverChildBuilderDelegate(
                               (context, index) {

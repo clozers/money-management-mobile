@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'splash-screen/splash_screen.dart';
 import 'auth/loginPage.dart';
 import 'auth/registerPage.dart';
 import 'home-page/homePage.dart';
@@ -21,14 +22,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Money Management App',
+      title: 'SpendKu',
       theme: ThemeData(
         primarySwatch: Colors.teal,
         textTheme: GoogleFonts.poppinsTextTheme(),
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
-      initialRoute: '/login',
+      initialRoute: '/splash',
       routes: {
+        '/splash': (context) => const SplashScreen(),
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
         '/home': (context) => HomePage(),
