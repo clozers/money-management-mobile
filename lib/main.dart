@@ -10,6 +10,7 @@ import 'tambah-transaksi-page/tambah_transaksi_page.dart';
 import 'detail-transaksi-page/detail_transaksi_page.dart';
 import 'edit-transaksi-page/edit_transaksi_page.dart';
 import 'detail-profil-page/detail_profil_page.dart';
+import 'analisis-page/analisis_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -54,6 +55,7 @@ class MyApp extends StatelessWidget {
           );
         },
         '/detail-profil': (context) => const DetailProfilPage(),
+        '/analisis': (context) => const AnalisisPage(),
       },
     );
   }

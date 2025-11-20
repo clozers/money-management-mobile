@@ -102,6 +102,38 @@ class ApiService {
     }
   }
 
+  // 💰 UPDATE GAJI BULANAN
+  static Future<Map<String, dynamic>?> updateGaji(
+    String token,
+    double gajiBulanan,
+  ) async {
+    final body = jsonEncode({
+      'gaji_bulanan': gajiBulanan,
+    });
+
+    print('Update gaji request body: $body');
+
+    final response = await http.put(
+      Uri.parse('$baseUrl/user'),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: body,
+    );
+
+    print('Update gaji response status: ${response.statusCode}');
+    print('Update gaji response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      print('Update gaji error: ${response.body}');
+      return null;
+    }
+  }
+
   // 🧾 GET LIST TRANSAKSI
   static Future<List<dynamic>> getTransaksi(String token) async {
     final response = await http.get(

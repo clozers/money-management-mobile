@@ -14,7 +14,8 @@ class _HomePageState extends State<HomePage> {
   String? userName;
   double totalBulan = 0;
   double totalMinggu = 0;
-  double totalGaji = 0;
+  double totalGaji = 0; // Sisa gaji
+  double gajiBulanan = 0; // Gaji bulanan
   List<dynamic> transaksi = [];
   bool isLoading = true;
 
@@ -33,20 +34,53 @@ class _HomePageState extends State<HomePage> {
 
     if (token == null) return;
 
-    // 🔥 PANGGIL DUA API SEKALIGUS
+    // 🔥 PANGGIL TIGA API SEKALIGUS
     final home = await ApiService.getHome(token!);
     final pengeluaran = await ApiService.getTransaksi(token!);
+    final user = await ApiService.getUser(token!);
+
+    // Hitung pengeluaran minggu ini dari transaksi (7 hari terakhir)
+    final now = DateTime.now();
+    final startOfWeek = now.subtract(const Duration(days: 7));
+
+    double pengeluaranMingguIni = 0;
+    for (var item in pengeluaran) {
+      try {
+        String dateStr = item['tanggal'] ?? item['created_at'] ?? '';
+        if (dateStr.isNotEmpty) {
+          final transaksiDate = DateTime.parse(dateStr.split('T')[0]);
+          final transaksiDateOnly = DateTime(
+              transaksiDate.year, transaksiDate.month, transaksiDate.day);
+          final startDateOnly =
+              DateTime(startOfWeek.year, startOfWeek.month, startOfWeek.day);
+          final nowDateOnly = DateTime(now.year, now.month, now.day);
+
+          // Jika transaksi dalam 7 hari terakhir
+          if (transaksiDateOnly
+                  .isAfter(startDateOnly.subtract(const Duration(days: 1))) &&
+              transaksiDateOnly
+                  .isBefore(nowDateOnly.add(const Duration(days: 1)))) {
+            final total = double.tryParse(item['total'].toString()) ?? 0;
+            pengeluaranMingguIni += total;
+          }
+        }
+      } catch (e) {
+        // Skip jika error parsing tanggal
+      }
+    }
 
     setState(() {
       // Data dari API /home
       totalBulan = double.tryParse(
               home?['total_pengeluaran_bulan_ini'].toString() ?? "0") ??
           0;
-      totalMinggu = double.tryParse(
-              home?['total_pengeluaran_minggu_ini'].toString() ?? "0") ??
-          0;
+      totalMinggu = pengeluaranMingguIni; // Hitung dari transaksi per minggu
       totalGaji = double.tryParse(home?['sisa_gaji'].toString() ?? "0") ?? 0;
       userName = home?['nama_user'] ?? userName;
+
+      // Data gaji bulanan dari API /user
+      gajiBulanan =
+          double.tryParse(user?['gaji_bulanan'].toString() ?? "0") ?? 0;
 
       // Data dari API /pengeluaran
       // Sort dari terbaru ke terlama berdasarkan created_at atau tanggal
@@ -417,7 +451,7 @@ class _HomePageState extends State<HomePage> {
                                     child: _statCard(
                                       context,
                                       'Gaji Bulan Ini',
-                                      currencyFormat.format(totalGaji),
+                                      currencyFormat.format(gajiBulanan),
                                       Icons.trending_up,
                                       Colors.green,
                                     ),
@@ -583,6 +617,87 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(height: 24),
 
                           // ================= Transaksi Section =================
+                          // Analisis Card
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(context, '/analisis');
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color(0xFF0E8F6A),
+                                      const Color(0xFF14B885),
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF0E8F6A)
+                                          .withOpacity(0.3),
+                                      blurRadius: 15,
+                                      offset: const Offset(0, 8),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.2),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: const Icon(
+                                        Icons.analytics_outlined,
+                                        color: Colors.white,
+                                        size: 28,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            'Analisis Pengeluaran',
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            'Lihat analisis detail pengeluaran Anda',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color:
+                                                  Colors.white.withOpacity(0.9),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 24),
+
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Row(

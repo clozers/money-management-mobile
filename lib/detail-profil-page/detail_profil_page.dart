@@ -321,17 +321,75 @@ class _DetailProfilPageState extends State<DetailProfilPage> {
                                 SizedBox(
                                   width: double.infinity,
                                   child: ElevatedButton.icon(
-                                    onPressed: () {
+                                    onPressed: () async {
                                       if (_formKey.currentState!.validate()) {
-                                        // TODO: Implement API call untuk update gaji
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                                'Fitur update gaji akan segera tersedia'),
-                                            backgroundColor: Colors.orange,
+                                        final gajiValue = double.tryParse(
+                                                _gajiController.text) ??
+                                            0;
+
+                                        // Show loading
+                                        showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (context) => const Center(
+                                            child: CircularProgressIndicator(),
                                           ),
                                         );
+
+                                        final result =
+                                            await ApiService.updateGaji(
+                                          token!,
+                                          gajiValue,
+                                        );
+
+                                        // Close loading
+                                        if (mounted) Navigator.pop(context);
+
+                                        if (result != null) {
+                                          if (mounted) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: const Text(
+                                                    'Gaji bulanan berhasil diperbarui!'),
+                                                backgroundColor: Colors.green,
+                                                behavior:
+                                                    SnackBarBehavior.floating,
+                                                margin: EdgeInsets.only(
+                                                  top: MediaQuery.of(context)
+                                                          .padding
+                                                          .top +
+                                                      16,
+                                                  left: 16,
+                                                  right: 16,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                          // Reload data
+                                          await loadData();
+                                        } else {
+                                          if (mounted) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: const Text(
+                                                    'Gagal memperbarui gaji bulanan'),
+                                                backgroundColor: Colors.red,
+                                                behavior:
+                                                    SnackBarBehavior.floating,
+                                                margin: EdgeInsets.only(
+                                                  top: MediaQuery.of(context)
+                                                          .padding
+                                                          .top +
+                                                      16,
+                                                  left: 16,
+                                                  right: 16,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        }
                                       }
                                     },
                                     icon: const Icon(Icons.save),

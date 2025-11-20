@@ -622,11 +622,6 @@ class _PengeluaranPageState extends State<PengeluaranPage> {
                 ],
               ),
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showAddTransactionDialog,
-        backgroundColor: const Color(0xFF0E8F6A),
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
     );
   }
 }
