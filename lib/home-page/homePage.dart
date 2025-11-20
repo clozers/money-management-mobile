@@ -659,16 +659,20 @@ class _HomePageState extends State<HomePage> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 20, vertical: 6),
                                     child: Container(
-                                      padding: const EdgeInsets.all(16),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 20,
+                                        vertical: 18,
+                                      ),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius: BorderRadius.circular(12),
+                                        borderRadius: BorderRadius.circular(20),
                                         boxShadow: [
                                           BoxShadow(
                                             color:
                                                 Colors.black.withOpacity(0.03),
                                             blurRadius: 8,
                                             offset: const Offset(0, 2),
+                                            spreadRadius: 0,
                                           ),
                                         ],
                                       ),
@@ -685,24 +689,40 @@ class _HomePageState extends State<HomePage> {
                                             loadData();
                                           }
                                         },
-                                        borderRadius: BorderRadius.circular(12),
+                                        borderRadius: BorderRadius.circular(20),
                                         child: Row(
                                           children: [
                                             Container(
-                                              padding: const EdgeInsets.all(10),
+                                              width: 50,
+                                              height: 50,
                                               decoration: BoxDecoration(
-                                                color: Color(0xFF0E8F6A)
-                                                    .withOpacity(0.1),
+                                                gradient: LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                  colors: [
+                                                    const Color(0xFF0E8F6A),
+                                                    const Color(0xFF14B885),
+                                                  ],
+                                                ),
                                                 borderRadius:
-                                                    BorderRadius.circular(10),
+                                                    BorderRadius.circular(12),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color:
+                                                        const Color(0xFF0E8F6A)
+                                                            .withOpacity(0.15),
+                                                    blurRadius: 6,
+                                                    offset: const Offset(0, 3),
+                                                  ),
+                                                ],
                                               ),
                                               child: const Icon(
-                                                Icons.receipt_long,
-                                                color: Color(0xFF0E8F6A),
+                                                Icons.receipt_long_rounded,
+                                                color: Colors.white,
                                                 size: 24,
                                               ),
                                             ),
-                                            const SizedBox(width: 16),
+                                            const SizedBox(width: 20),
                                             Expanded(
                                               child: Column(
                                                 crossAxisAlignment:
@@ -715,21 +735,39 @@ class _HomePageState extends State<HomePage> {
                                                     style: const TextStyle(
                                                       fontWeight:
                                                           FontWeight.w600,
-                                                      fontSize: 15,
+                                                      fontSize: 16,
                                                       color: Colors.black87,
+                                                      letterSpacing: -0.1,
                                                     ),
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
                                                   ),
-                                                  const SizedBox(height: 4),
-                                                  Text(
-                                                    item['tanggal'] ?? '',
-                                                    style: TextStyle(
-                                                      color: Colors.grey[600],
-                                                      fontSize: 13,
-                                                    ),
+                                                  const SizedBox(height: 10),
+                                                  Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.calendar_today,
+                                                        size: 13,
+                                                        color: Colors.grey[400],
+                                                      ),
+                                                      const SizedBox(width: 8),
+                                                      Text(
+                                                        item['tanggal'] ?? '',
+                                                        style: TextStyle(
+                                                          color:
+                                                              Colors.grey[500],
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ],
                                               ),
                                             ),
+                                            const SizedBox(width: 16),
                                             Text(
                                               currencyFormat.format(
                                                 double.tryParse(item['total']
@@ -738,8 +776,9 @@ class _HomePageState extends State<HomePage> {
                                               ),
                                               style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 16,
+                                                fontSize: 17,
                                                 color: Colors.red,
+                                                letterSpacing: -0.1,
                                               ),
                                             ),
                                           ],

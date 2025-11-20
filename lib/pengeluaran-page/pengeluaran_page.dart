@@ -479,9 +479,9 @@ class _PengeluaranPageState extends State<PengeluaranPage> {
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.06),
-                                    blurRadius: 15,
-                                    offset: const Offset(0, 5),
+                                    color: Colors.black.withOpacity(0.03),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
                                     spreadRadius: 0,
                                   ),
                                 ],
@@ -501,159 +501,96 @@ class _PengeluaranPageState extends State<PengeluaranPage> {
                                     }
                                   },
                                   borderRadius: BorderRadius.circular(20),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      border: Border.all(
-                                        color: Colors.grey.withOpacity(0.1),
-                                        width: 1,
-                                      ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                      vertical: 18,
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(18),
-                                      child: Row(
-                                        children: [
-                                          // Icon kategori dengan gradient
-                                          Container(
-                                            width: 60,
-                                            height: 60,
-                                            decoration: BoxDecoration(
-                                              gradient: LinearGradient(
-                                                begin: Alignment.topLeft,
-                                                end: Alignment.bottomRight,
-                                                colors: [
-                                                  const Color(0xFF0E8F6A)
-                                                      .withOpacity(0.15),
-                                                  const Color(0xFF14B885)
-                                                      .withOpacity(0.15),
-                                                ],
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(16),
-                                              border: Border.all(
-                                                color: const Color(0xFF0E8F6A)
-                                                    .withOpacity(0.2),
-                                                width: 1.5,
-                                              ),
-                                            ),
-                                            child: const Icon(
-                                              Icons.receipt_long_rounded,
-                                              color: Color(0xFF0E8F6A),
-                                              size: 30,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 16),
-                                          // Info transaksi
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  kategoriNama,
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black87,
-                                                    letterSpacing: -0.3,
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                                const SizedBox(height: 6),
-                                                Row(
-                                                  children: [
-                                                    Container(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 4,
-                                                      ),
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.grey[100],
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                      ),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        children: [
-                                                          Icon(
-                                                            Icons
-                                                                .calendar_today,
-                                                            size: 12,
-                                                            color: Colors
-                                                                .grey[700],
-                                                          ),
-                                                          const SizedBox(
-                                                              width: 4),
-                                                          Text(
-                                                            tanggal,
-                                                            style: TextStyle(
-                                                              fontSize: 12,
-                                                              color: Colors
-                                                                  .grey[700],
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
+                                    child: Row(
+                                      children: [
+                                        // Icon kategori dengan gradient yang lebih menarik
+                                        Container(
+                                          width: 50,
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                              colors: [
+                                                const Color(0xFF0E8F6A),
+                                                const Color(0xFF14B885),
                                               ],
                                             ),
-                                          ),
-                                          const SizedBox(width: 12),
-                                          // Total dengan arrow
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                  horizontal: 10,
-                                                  vertical: 6,
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.red
-                                                      .withOpacity(0.1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                child: Text(
-                                                  currencyFormat.format(total),
-                                                  style: const TextStyle(
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.red,
-                                                    letterSpacing: -0.3,
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(height: 6),
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.all(6),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.grey[100],
-                                                  shape: BoxShape.circle,
-                                                ),
-                                                child: Icon(
-                                                  Icons.arrow_forward_ios,
-                                                  color: Colors.grey[600],
-                                                  size: 12,
-                                                ),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: const Color(0xFF0E8F6A)
+                                                    .withOpacity(0.15),
+                                                blurRadius: 6,
+                                                offset: const Offset(0, 3),
                                               ),
                                             ],
                                           ),
-                                        ],
-                                      ),
+                                          child: const Icon(
+                                            Icons.receipt_long_rounded,
+                                            color: Colors.white,
+                                            size: 24,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 20),
+                                        // Info transaksi
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                kategoriNama,
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.black87,
+                                                  letterSpacing: -0.1,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              const SizedBox(height: 10),
+                                              Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.calendar_today,
+                                                    size: 13,
+                                                    color: Colors.grey[400],
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  Text(
+                                                    tanggal,
+                                                    style: TextStyle(
+                                                      fontSize: 13,
+                                                      color: Colors.grey[500],
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(width: 16),
+                                        // Total dengan style yang lebih clean
+                                        Text(
+                                          currencyFormat.format(total),
+                                          style: const TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.red,
+                                            letterSpacing: -0.1,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
