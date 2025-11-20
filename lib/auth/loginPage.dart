@@ -81,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: 40),
                   // Title
                   Text(
-                    'Selamat datang kembali di Spendku!',
+                    'Selamat datang kembali di SpendKu!',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w600,

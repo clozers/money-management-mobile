@@ -54,7 +54,10 @@ class _DetailProfilPageState extends State<DetailProfilPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detail Profil'),
+        title: const Text(
+          'Detail Profil',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: const Color(0xFF0E8F6A),
         elevation: 0,
         leading: IconButton(
@@ -247,29 +250,58 @@ class _DetailProfilPageState extends State<DetailProfilPage> {
                                 TextFormField(
                                   controller: _gajiController,
                                   keyboardType: TextInputType.number,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black87,
+                                  ),
                                   decoration: InputDecoration(
                                     labelText: 'Jumlah Gaji',
-                                    hintText: 'Masukkan gaji bulanan',
-                                    prefixIcon: const Icon(Icons.attach_money),
-                                    suffixText: 'Rupiah',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
+                                    labelStyle: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 16,
                                     ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
+                                    hintText: 'Masukkan gaji bulanan',
+                                    hintStyle: TextStyle(
+                                      color: Colors.grey[400],
+                                      fontSize: 14,
+                                    ),
+                                    prefixIcon: const Icon(
+                                      Icons.attach_money_rounded,
+                                      color: Color(0xFF0E8F6A),
+                                    ),
+                                    suffixText: 'Rupiah',
+                                    suffixStyle: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 14,
+                                    ),
+                                    enabledBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                         color: Colors.grey[300]!,
+                                        width: 1,
                                       ),
                                     ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(
+                                    focusedBorder: const UnderlineInputBorder(
+                                      borderSide: BorderSide(
                                         color: Color(0xFF0E8F6A),
                                         width: 2,
                                       ),
                                     ),
-                                    filled: true,
-                                    fillColor: Colors.grey[50],
+                                    errorBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.red.shade300,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    focusedErrorBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.red.shade300,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    errorStyle: TextStyle(
+                                      color: Colors.red.shade600,
+                                      fontSize: 12,
+                                    ),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {

@@ -166,20 +166,92 @@ class ApiService {
 
   // 📋 GET KATEGORI
   static Future<List<dynamic>> getKategori(String token) async {
-    final response = await http.get(
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/kategori'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      print('Kategori response status: ${response.statusCode}');
+      print('Kategori response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        try {
+          final data = jsonDecode(response.body);
+
+          // Handle berbagai format response
+          if (data is List) {
+            // Jika response langsung array
+            return List<dynamic>.from(data);
+          } else if (data is Map<String, dynamic>) {
+            // Jika response adalah object dengan key
+            if (data.containsKey('kategoris')) {
+              final kategoris = data['kategoris'];
+              if (kategoris is List) {
+                return List<dynamic>.from(kategoris);
+              }
+            }
+            if (data.containsKey('data')) {
+              final dataList = data['data'];
+              if (dataList is List) {
+                return List<dynamic>.from(dataList);
+              }
+            }
+            if (data.containsKey('kategori')) {
+              final kategori = data['kategori'];
+              if (kategori is List) {
+                return List<dynamic>.from(kategori);
+              }
+            }
+          }
+
+          print(
+              'Kategori: Format response tidak dikenali. Data type: ${data.runtimeType}');
+          return [];
+        } catch (e) {
+          print('Kategori: Error parsing response: $e');
+          return [];
+        }
+      } else {
+        print('Kategori error: ${response.statusCode} => ${response.body}');
+        return [];
+      }
+    } catch (e) {
+      print('Kategori exception: $e');
+      return [];
+    }
+  }
+
+  // ➕ TAMBAH KATEGORI
+  static Future<Map<String, dynamic>?> tambahKategori(
+      String token, String namaKategori) async {
+    final body = jsonEncode({
+      'nama_kategori': namaKategori,
+    });
+
+    print('Tambah kategori request body: $body');
+
+    final response = await http.post(
       Uri.parse('$baseUrl/kategori'),
       headers: {
         'Accept': 'application/json',
+        'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
+      body: body,
     );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return data['kategoris'] ?? data['data'] ?? [];
+    print('Tambah kategori response status: ${response.statusCode}');
+    print('Tambah kategori response body: ${response.body}');
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return jsonDecode(response.body);
     } else {
-      print('Kategori error: ${response.body}');
-      return [];
+      print('Tambah kategori error: ${response.body}');
+      return null;
     }
   }
 
@@ -229,6 +301,32 @@ class ApiService {
     } else {
       print('Tambah transaksi error: ${response.body}');
       return null;
+    }
+  }
+
+  // 🗑️ DELETE TRANSAKSI
+  static Future<bool> deleteTransaksi(String token, String transaksiId) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('$baseUrl/transaksi/$transaksiId'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      print('Delete transaksi response status: ${response.statusCode}');
+      print('Delete transaksi response body: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        return true;
+      } else {
+        print('Delete transaksi error: ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      print('Delete transaksi exception: $e');
+      return false;
     }
   }
 

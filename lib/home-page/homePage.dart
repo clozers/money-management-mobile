@@ -169,43 +169,6 @@ class _HomePageState extends State<HomePage> {
                   }
                 },
               ),
-              const SizedBox(height: 8),
-              // Tambah Manual - Pemasukan
-              ListTile(
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                leading: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.trending_up,
-                    color: Colors.green,
-                  ),
-                ),
-                title: const Text(
-                  'Tambah Pemasukan',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                subtitle: const Text('Catat pemasukan secara manual'),
-                onTap: () async {
-                  Navigator.pop(context);
-                  final result = await Navigator.pushNamed(
-                    context,
-                    '/tambah-transaksi',
-                    arguments: {'jenis': 'pemasukan'},
-                  );
-                  if (result == true) {
-                    loadData(); // Refresh data
-                  }
-                },
-              ),
               const SizedBox(height: 20),
             ],
           ),
@@ -220,7 +183,10 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('SpendKu', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+        title: Text(
+          'SpendKu',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: const Color(0xFF0E8F6A),
         elevation: 0,
         automaticallyImplyLeading: false,
@@ -707,12 +673,17 @@ class _HomePageState extends State<HomePage> {
                                         ],
                                       ),
                                       child: InkWell(
-                                        onTap: () {
-                                          Navigator.pushNamed(
+                                        onTap: () async {
+                                          final result =
+                                              await Navigator.pushNamed(
                                             context,
                                             '/detail-transaksi',
                                             arguments: {'id': item['id']},
                                           );
+                                          // Refresh data jika transaksi dihapus
+                                          if (result == true) {
+                                            loadData();
+                                          }
                                         },
                                         borderRadius: BorderRadius.circular(12),
                                         child: Row(
