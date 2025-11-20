@@ -468,6 +468,7 @@ class _PengeluaranPageState extends State<PengeluaranPage> {
                             final kategoriNama = item['kategori']
                                     ?['nama_kategori'] ??
                                 'Tidak ada kategori';
+                            final judul = item['judul'];
                             final tanggal = formatTanggal(item['tanggal']);
                             final total =
                                 double.tryParse(item['total'].toString()) ?? 0;
@@ -545,17 +546,34 @@ class _PengeluaranPageState extends State<PengeluaranPage> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text(
-                                                kategoriNama,
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Colors.black87,
-                                                  letterSpacing: -0.1,
+                                              // Judul transaksi (jika ada)
+                                              if (judul != null &&
+                                                  judul.toString().isNotEmpty)
+                                                Text(
+                                                  judul.toString(),
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.black87,
+                                                    letterSpacing: -0.1,
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                )
+                                              else
+                                                Text(
+                                                  kategoriNama,
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.black87,
+                                                    letterSpacing: -0.1,
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
                                               const SizedBox(height: 10),
                                               Row(
                                                 children: [

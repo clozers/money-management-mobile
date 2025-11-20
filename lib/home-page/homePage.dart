@@ -728,21 +728,40 @@ class _HomePageState extends State<HomePage> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text(
-                                                    item['kategori']?[
-                                                            'nama_kategori'] ??
-                                                        'Tanpa kategori',
-                                                    style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 16,
-                                                      color: Colors.black87,
-                                                      letterSpacing: -0.1,
+                                                  // Judul transaksi (jika ada)
+                                                  if (item['judul'] != null &&
+                                                      item['judul']
+                                                          .toString()
+                                                          .isNotEmpty)
+                                                    Text(
+                                                      item['judul'].toString(),
+                                                      style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 16,
+                                                        color: Colors.black87,
+                                                        letterSpacing: -0.1,
+                                                      ),
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    )
+                                                  else
+                                                    Text(
+                                                      item['kategori']?[
+                                                              'nama_kategori'] ??
+                                                          'Tanpa kategori',
+                                                      style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 16,
+                                                        color: Colors.black87,
+                                                        letterSpacing: -0.1,
+                                                      ),
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                     ),
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
                                                   const SizedBox(height: 10),
                                                   Row(
                                                     children: [

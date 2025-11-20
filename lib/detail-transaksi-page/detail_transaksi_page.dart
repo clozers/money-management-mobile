@@ -301,6 +301,22 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
                                     'Tidak ada kategori',
                               ),
                               const Divider(),
+                              _buildInfoRowWithNote(
+                                'Catatan',
+                                _detail!['catatan'] != null &&
+                                        _detail!['catatan']
+                                            .toString()
+                                            .isNotEmpty
+                                    ? _detail!['catatan'].toString()
+                                    : 'Tidak ada catatan',
+                                valueColor: _detail!['catatan'] != null &&
+                                        _detail!['catatan']
+                                            .toString()
+                                            .isNotEmpty
+                                    ? Colors.black87
+                                    : Colors.grey[400],
+                              ),
+                              const Divider(),
                               _buildInfoRow(
                                 'Tanggal',
                                 _detail!['tanggal'] ?? '-',
@@ -576,6 +592,38 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
               fontWeight: FontWeight.w500,
             ),
           ),
+          Flexible(
+            child: Text(
+              value,
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                color: valueColor ?? Colors.black87,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRowWithNote(String label, String value,
+      {Color? valueColor}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 4),
           Text(
             value,
             style: TextStyle(
