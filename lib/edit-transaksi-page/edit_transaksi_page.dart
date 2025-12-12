@@ -3,6 +3,46 @@ import 'package:intl/intl.dart';
 import '../services/api_service.dart';
 import '../services/local_storage.dart';
 
+// Model untuk item transaksi
+class TransaksiItem {
+  final int? id; // id untuk item yang sudah ada di database
+  final String nama;
+  final int qty;
+  final double harga;
+
+  TransaksiItem({
+    this.id,
+    required this.nama,
+    required this.qty,
+    required this.harga,
+  });
+
+  double get subtotal => qty * harga;
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{
+      'nama': nama,
+      'qty': qty,
+      'harga': harga,
+    };
+    // Hanya tambahkan id jika item sudah ada di database
+    if (id != null) {
+      map['id'] = id;
+    }
+    return map;
+  }
+
+  // Factory untuk create dari JSON (dari API)
+  factory TransaksiItem.fromJson(Map<String, dynamic> json) {
+    return TransaksiItem(
+      id: json['id'] as int?,
+      nama: json['nama'] as String,
+      qty: json['qty'] as int,
+      harga: (json['harga'] as num).toDouble(),
+    );
+  }
+}
+
 class EditTransaksiPage extends StatefulWidget {
   final String transaksiId;
   final Map<String, dynamic>? detail;
@@ -32,6 +72,10 @@ class _EditTransaksiPageState extends State<EditTransaksiPage> {
   bool _isLoadingDetail = true;
   DateTime _selectedDate = DateTime.now();
   Map<String, dynamic>? _detail;
+
+  // Items management
+  List<TransaksiItem> _items = [];
+  bool _useItems = false;
 
   final currencyFormat =
       NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
@@ -80,6 +124,21 @@ class _EditTransaksiPageState extends State<EditTransaksiPage> {
           if (_detail!['kategori'] != null &&
               _detail!['kategori']['id'] != null) {
             _selectedKategoriId = _detail!['kategori']['id'].toString();
+          }
+
+          // Load items jika ada
+          if (_detail!['items'] != null && _detail!['items'] is List) {
+            final itemsList = _detail!['items'] as List;
+            setState(() {
+              _items = itemsList
+                  .map((item) =>
+                      TransaksiItem.fromJson(item as Map<String, dynamic>))
+                  .toList();
+              if (_items.isNotEmpty) {
+                _useItems = true;
+                _calculateTotalFromItems();
+              }
+            });
           }
         }
 
@@ -182,6 +241,359 @@ class _EditTransaksiPageState extends State<EditTransaksiPage> {
     }
   }
 
+  void _calculateTotalFromItems() {
+    if (_items.isNotEmpty) {
+      final total = _items.fold<double>(
+        0,
+        (sum, item) => sum + item.subtotal,
+      );
+      setState(() {
+        _totalCtrl.text = total.toStringAsFixed(0);
+        _useItems = true;
+      });
+    }
+  }
+
+  void _addItem() {
+    _showAddItemDialog();
+  }
+
+  void _editItem(int index) {
+    _showAddItemDialog(item: _items[index], index: index);
+  }
+
+  void _removeItem(int index) {
+    setState(() {
+      _items.removeAt(index);
+      _calculateTotalFromItems();
+    });
+  }
+
+  Future<void> _showAddItemDialog({TransaksiItem? item, int? index}) async {
+    final namaCtrl = TextEditingController(text: item?.nama ?? '');
+    final qtyCtrl = TextEditingController(text: item?.qty.toString() ?? '1');
+    final hargaCtrl = TextEditingController(text: item?.harga.toString() ?? '');
+    final formKey = GlobalKey<FormState>();
+    bool isLoading = false;
+
+    final dialogPrimaryColor = const Color(0xFF0E8F6A);
+
+    await showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          backgroundColor: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        item == null ? 'Tambah Item' : 'Edit Item',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[900],
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () => Navigator.pop(context),
+                          borderRadius: BorderRadius.circular(8),
+                          child: Padding(
+                            padding: const EdgeInsets.all(4),
+                            child: Icon(
+                              Icons.close_rounded,
+                              size: 20,
+                              color: Colors.grey[400],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  TextFormField(
+                    controller: namaCtrl,
+                    autofocus: true,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: 'Nama Item',
+                      labelStyle: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 14,
+                      ),
+                      hintText: 'Contoh: Nasi Goreng Special',
+                      hintStyle: TextStyle(
+                        color: Colors.grey[400],
+                        fontSize: 14,
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey[300]!,
+                          width: 1,
+                        ),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: dialogPrimaryColor,
+                          width: 2,
+                        ),
+                      ),
+                      errorBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.red.shade300,
+                          width: 1,
+                        ),
+                      ),
+                      focusedErrorBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.red.shade300,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Nama item tidak boleh kosong';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: qtyCtrl,
+                          keyboardType: TextInputType.number,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87,
+                          ),
+                          decoration: InputDecoration(
+                            labelText: 'Qty',
+                            labelStyle: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 14,
+                            ),
+                            hintText: '1',
+                            hintStyle: TextStyle(
+                              color: Colors.grey[400],
+                              fontSize: 14,
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.grey[300]!,
+                                width: 1,
+                              ),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: dialogPrimaryColor,
+                                width: 2,
+                              ),
+                            ),
+                            errorBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.red.shade300,
+                                width: 1,
+                              ),
+                            ),
+                            focusedErrorBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.red.shade300,
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Qty tidak boleh kosong';
+                            }
+                            final qty = int.tryParse(value);
+                            if (qty == null || qty <= 0) {
+                              return 'Qty harus lebih dari 0';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        flex: 2,
+                        child: TextFormField(
+                          controller: hargaCtrl,
+                          keyboardType: TextInputType.number,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87,
+                          ),
+                          decoration: InputDecoration(
+                            labelText: 'Harga',
+                            labelStyle: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 14,
+                            ),
+                            hintText: '0',
+                            hintStyle: TextStyle(
+                              color: Colors.grey[400],
+                              fontSize: 14,
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.grey[300]!,
+                                width: 1,
+                              ),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: dialogPrimaryColor,
+                                width: 2,
+                              ),
+                            ),
+                            errorBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.red.shade300,
+                                width: 1,
+                              ),
+                            ),
+                            focusedErrorBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.red.shade300,
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Harga tidak boleh kosong';
+                            }
+                            final harga = double.tryParse(
+                              value.replaceAll(RegExp(r'[^\d]'), ''),
+                            );
+                            if (harga == null || harga <= 0) {
+                              return 'Harga harus lebih dari 0';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 28),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                          onPressed:
+                              isLoading ? null : () => Navigator.pop(context),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            'Batal',
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        flex: 2,
+                        child: ElevatedButton(
+                          onPressed: isLoading
+                              ? null
+                              : () {
+                                  if (!formKey.currentState!.validate()) {
+                                    return;
+                                  }
+
+                                  final qty = int.parse(qtyCtrl.text);
+                                  final harga = double.parse(
+                                    hargaCtrl.text.replaceAll(
+                                      RegExp(r'[^\d]'),
+                                      '',
+                                    ),
+                                  );
+
+                                  setState(() {
+                                    if (index != null && item != null) {
+                                      // Edit existing item
+                                      _items[index] = TransaksiItem(
+                                        id: item.id, // Keep existing id
+                                        nama: namaCtrl.text.trim(),
+                                        qty: qty,
+                                        harga: harga,
+                                      );
+                                    } else {
+                                      // Add new item
+                                      _items.add(
+                                        TransaksiItem(
+                                          nama: namaCtrl.text.trim(),
+                                          qty: qty,
+                                          harga: harga,
+                                        ),
+                                      );
+                                    }
+                                    _useItems = true;
+                                    _calculateTotalFromItems();
+                                  });
+
+                                  Navigator.pop(context);
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: dialogPrimaryColor,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            item == null ? 'Tambah' : 'Simpan',
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -200,6 +612,12 @@ class _EditTransaksiPageState extends State<EditTransaksiPage> {
     setState(() => _isLoading = true);
 
     try {
+      // Convert items to JSON format
+      List<Map<String, dynamic>>? itemsJson;
+      if (_useItems && _items.isNotEmpty) {
+        itemsJson = _items.map((item) => item.toJson()).toList();
+      }
+
       final result = await ApiService.updateTransaksi(
         _token!,
         widget.transaksiId,
@@ -208,6 +626,7 @@ class _EditTransaksiPageState extends State<EditTransaksiPage> {
         _tanggalCtrl.text,
         _catatanCtrl.text.isEmpty ? null : _catatanCtrl.text,
         _judulCtrl.text.isEmpty ? null : _judulCtrl.text.trim(),
+        itemsJson,
       );
 
       setState(() => _isLoading = false);
@@ -980,6 +1399,207 @@ class _EditTransaksiPageState extends State<EditTransaksiPage> {
                               ),
                             ],
                           ),
+                          const SizedBox(height: 32),
+
+                          // Items Section - Minimalist & Modern
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Items List - Clean Cards
+                              if (_items.isNotEmpty) ...[
+                                const SizedBox(height: 2),
+                                ...List.generate(
+                                  _items.length,
+                                  (index) {
+                                    final item = _items[index];
+                                    return Container(
+                                      margin: const EdgeInsets.only(bottom: 8),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 14,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(12),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.02),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 2),
+                                            spreadRadius: 0,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          // Item Info
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  item.nama,
+                                                  style: const TextStyle(
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.black87,
+                                                    letterSpacing: -0.2,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 6),
+                                                Text(
+                                                  '${item.qty} × ${currencyFormat.format(item.harga)}',
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.grey[500],
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          // Subtotal
+                                          Text(
+                                            currencyFormat
+                                                .format(item.subtotal),
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: primaryColor,
+                                              letterSpacing: -0.3,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 12),
+                                          // Edit Button
+                                          Material(
+                                            color: Colors.transparent,
+                                            child: InkWell(
+                                              onTap: () => _editItem(index),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(6),
+                                                child: Icon(
+                                                  Icons.edit_outlined,
+                                                  size: 18,
+                                                  color: Colors.grey[400],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          // Delete Button - Minimal
+                                          Material(
+                                            color: Colors.transparent,
+                                            child: InkWell(
+                                              onTap: () => _removeItem(index),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(6),
+                                                child: Icon(
+                                                  Icons.close_rounded,
+                                                  size: 18,
+                                                  color: Colors.grey[400],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                                // Add Item Button (when items exist)
+                                const SizedBox(height: 8),
+                                Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: _addItem,
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 12,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[50],
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: Colors.grey[200]!,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.add_rounded,
+                                            size: 18,
+                                            color: primaryColor,
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            'Tambah Item',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                              color: primaryColor,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                // Total Items - Clean Summary
+                                const SizedBox(height: 16),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 14,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: primaryColor.withOpacity(0.05),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Total',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.grey[700],
+                                        ),
+                                      ),
+                                      Text(
+                                        currencyFormat.format(
+                                          _items.fold<double>(
+                                            0,
+                                            (sum, item) => sum + item.subtotal,
+                                          ),
+                                        ),
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: primaryColor,
+                                          letterSpacing: -0.3,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+
                           const SizedBox(height: 32),
 
                           // Judul Field - Clean & Minimal
