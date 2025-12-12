@@ -322,6 +322,7 @@ class ApiService {
     String? tanggal,
     String? catatan,
     String? judul,
+    List<Map<String, dynamic>>? items,
   ) async {
     // Convert total to number
     final totalValue =
@@ -331,14 +332,17 @@ class ApiService {
     final tanggalValue =
         tanggal ?? DateTime.now().toIso8601String().split('T')[0];
 
-    // Build body sesuai format API: kategori_id, tanggal, total, catatan, judul
-    final body = jsonEncode({
+    // Build body sesuai format API: kategori_id, tanggal, total, catatan, judul, items
+    final bodyMap = <String, dynamic>{
       'kategori_id': int.tryParse(kategoriId) ?? 0,
       'tanggal': tanggalValue,
       'total': totalValue,
       if (catatan != null && catatan.isNotEmpty) 'catatan': catatan,
       if (judul != null && judul.isNotEmpty) 'judul': judul,
-    });
+      if (items != null && items.isNotEmpty) 'items': items,
+    };
+
+    final body = jsonEncode(bodyMap);
 
     print('Tambah transaksi request body: $body');
     print('Jenis transaksi: $jenis');

@@ -109,7 +109,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final sisaGaji = totalGaji - totalBulan;
+    final sisaGaji = totalGaji;
 
     return Scaffold(
       appBar: AppBar(
