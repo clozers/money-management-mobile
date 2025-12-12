@@ -75,12 +75,12 @@ class _HomePageState extends State<HomePage> {
               home?['total_pengeluaran_bulan_ini'].toString() ?? "0") ??
           0;
       totalMinggu = pengeluaranMingguIni; // Hitung dari transaksi per minggu
-      totalGaji = double.tryParse(home?['sisa_gaji'].toString() ?? "0") ?? 0;
       userName = home?['nama_user'] ?? userName;
 
-      // Data gaji bulanan dari API /user
+      // Data dari API /user
       gajiBulanan =
           double.tryParse(user?['gaji_bulanan'].toString() ?? "0") ?? 0;
+      totalGaji = double.tryParse(user?['sisa_gaji'].toString() ?? "0") ?? 0;
 
       // Data dari API /pengeluaran
       // Sort dari terbaru ke terlama berdasarkan created_at atau tanggal
