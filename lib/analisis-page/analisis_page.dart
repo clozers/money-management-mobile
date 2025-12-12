@@ -235,52 +235,56 @@ class _AnalisisPageState extends State<AnalisisPage> {
         backgroundColor: const Color(0xFF0E8F6A),
         color: Colors.white,
         onRefresh: loadData,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Overview Cards
-              _buildOverviewSection(overview),
+        child: transaksi.isEmpty
+            ? _buildEmptyState()
+            : SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Overview Cards
+                    _buildOverviewSection(overview),
 
-              const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-              // Pie Chart - Distribusi Kategori
-              if (kategoriData.isNotEmpty) ...[
-                _buildSectionTitle('Distribusi Pengeluaran per Kategori'),
-                const SizedBox(height: 16),
-                _buildPieChart(pieData, colors),
-                const SizedBox(height: 24),
-              ],
+                    // Pie Chart - Distribusi Kategori
+                    if (kategoriData.isNotEmpty) ...[
+                      _buildSectionTitle('Distribusi Pengeluaran per Kategori'),
+                      const SizedBox(height: 16),
+                      _buildPieChart(pieData, colors),
+                      const SizedBox(height: 24),
+                    ],
 
-              // Bar Chart - Top 5 Kategori
-              if (top5Kategori.isNotEmpty) ...[
-                _buildSectionTitle('Top 5 Kategori Pengeluaran'),
-                const SizedBox(height: 16),
-                _buildBarChart(top5Kategori, colors),
-                const SizedBox(height: 24),
-              ],
+                    // Bar Chart - Top 5 Kategori
+                    if (top5Kategori.isNotEmpty) ...[
+                      _buildSectionTitle('Top 5 Kategori Pengeluaran'),
+                      const SizedBox(height: 16),
+                      _buildBarChart(top5Kategori, colors),
+                      const SizedBox(height: 24),
+                    ],
 
-              // Line Chart - Trend Bulanan
-              if (monthlyTrend.isNotEmpty) ...[
-                _buildSectionTitle('Trend Pengeluaran (6 Bulan Terakhir)'),
-                const SizedBox(height: 16),
-                _buildLineChart(monthlyTrend),
-                const SizedBox(height: 24),
-              ],
+                    // Line Chart - Trend Bulanan
+                    if (monthlyTrend.isNotEmpty &&
+                        monthlyTrend.any((e) => e['total'] > 0)) ...[
+                      _buildSectionTitle(
+                          'Trend Pengeluaran (6 Bulan Terakhir)'),
+                      const SizedBox(height: 16),
+                      _buildLineChart(monthlyTrend),
+                      const SizedBox(height: 24),
+                    ],
 
-              // List Kategori Detail
-              if (pieData.isNotEmpty) ...[
-                _buildSectionTitle('Detail per Kategori'),
-                const SizedBox(height: 16),
-                _buildKategoriList(
-                    pieData, colors, overview['totalBulanIni'] as double),
-              ],
+                    // List Kategori Detail
+                    if (pieData.isNotEmpty) ...[
+                      _buildSectionTitle('Detail per Kategori'),
+                      const SizedBox(height: 16),
+                      _buildKategoriList(
+                          pieData, colors, overview['totalBulanIni'] as double),
+                    ],
 
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
       ),
     );
   }
@@ -656,7 +660,7 @@ class _AnalisisPageState extends State<AnalisisPage> {
           gridData: FlGridData(
             show: true,
             drawVerticalLine: false,
-            horizontalInterval: maxValue / 4,
+            horizontalInterval: maxValue > 0 ? maxValue / 4 : 1,
             getDrawingHorizontalLine: (value) {
               return FlLine(
                 color: Colors.grey[200]!,
@@ -715,7 +719,7 @@ class _AnalisisPageState extends State<AnalisisPage> {
           gridData: FlGridData(
             show: true,
             drawVerticalLine: false,
-            horizontalInterval: maxValue / 4,
+            horizontalInterval: maxValue > 0 ? maxValue / 4 : 1,
             getDrawingHorizontalLine: (value) {
               return FlLine(
                 color: Colors.grey[200]!,
@@ -884,6 +888,102 @@ class _AnalisisPageState extends State<AnalisisPage> {
             ),
           );
         }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(40),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 60),
+            // Title
+            Text(
+              'Belum Ada Data Pengeluaran',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[800],
+                letterSpacing: -0.5,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            // Description
+            Text(
+              'Kamu belum mencatat pengeluaranmu nih!',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Yuk, mulai catat pengeluaranmu untuk melihat analisis yang lebih detail! 💰',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.grey[500],
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 40),
+            // CTA Button
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF0E8F6A).withOpacity(0.3),
+                    blurRadius: 15,
+                    offset: const Offset(0, 8),
+                    spreadRadius: 0,
+                  ),
+                ],
+              ),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/tambah-transaksi',
+                      arguments: {'jenis': 'pengeluaran'});
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0E8F6A),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.add_circle_outline, size: 22),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'Catat Pengeluaran Pertama',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }
