@@ -16,6 +16,7 @@ class _DetailProfilPageState extends State<DetailProfilPage> {
   bool loading = true;
 
   final TextEditingController _gajiController = TextEditingController();
+  int? _tanggalGajian;
   final _formKey = GlobalKey<FormState>();
 
   final currencyFormat =
@@ -40,8 +41,13 @@ class _DetailProfilPageState extends State<DetailProfilPage> {
       final res = await ApiService.getUser(token!);
       setState(() {
         user = res;
-        if (res != null && res['gaji_bulanan'] != null) {
-          _gajiController.text = res['gaji_bulanan'].toString();
+        if (res != null) {
+          if (res['gaji_bulanan'] != null) {
+            _gajiController.text = res['gaji_bulanan'].toString();
+          }
+          if (res['tanggal_gajian'] != null) {
+            _tanggalGajian = int.tryParse(res['tanggal_gajian'].toString());
+          }
         }
         loading = false;
       });
@@ -317,6 +323,54 @@ class _DetailProfilPageState extends State<DetailProfilPage> {
                                     return null;
                                   },
                                 ),
+                                const SizedBox(height: 20),
+                                
+                                // Custom Payday Picker
+                                InkWell(
+                                  onTap: _showPaydayPicker,
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: InputDecorator(
+                                    decoration: InputDecoration(
+                                      labelText: 'Tanggal Gajian',
+                                      prefixIcon: const Icon(Icons.calendar_month,
+                                          color: Color(0xFF0E8F6A)),
+                                      border: UnderlineInputBorder(
+                                          borderSide:
+                                              BorderSide(color: Colors.grey[300]!)),
+                                      focusedBorder: const UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Color(0xFF0E8F6A), width: 2)),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          _tanggalGajian != null
+                                              ? 'Tanggal $_tanggalGajian'
+                                              : 'Pilih Tanggal',
+                                          style: TextStyle(
+                                            color: _tanggalGajian != null
+                                                ? Colors.black87
+                                                : Colors.grey[600],
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        const Icon(Icons.arrow_drop_down,
+                                            color: Colors.grey),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Sisa gaji akan direset otomatis pada tanggal ini setiap bulan.',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[600],
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
                                 const SizedBox(height: 16),
                                 SizedBox(
                                   width: double.infinity,
@@ -337,9 +391,10 @@ class _DetailProfilPageState extends State<DetailProfilPage> {
                                         );
 
                                         final result =
-                                            await ApiService.updateGaji(
+                                            await ApiService.updateUser(
                                           token!,
-                                          gajiValue,
+                                          gajiBulanan: gajiValue,
+                                          tanggalGajian: _tanggalGajian,
                                         );
 
                                         // Close loading
@@ -351,7 +406,7 @@ class _DetailProfilPageState extends State<DetailProfilPage> {
                                                 .showSnackBar(
                                               SnackBar(
                                                 content: const Text(
-                                                    'Gaji bulanan berhasil diperbarui!'),
+                                                    'Profil berhasil diperbarui!'),
                                                 backgroundColor: Colors.green,
                                                 behavior:
                                                     SnackBarBehavior.floating,
@@ -374,7 +429,7 @@ class _DetailProfilPageState extends State<DetailProfilPage> {
                                                 .showSnackBar(
                                               SnackBar(
                                                 content: const Text(
-                                                    'Gagal memperbarui gaji bulanan'),
+                                                    'Gagal memperbarui profil'),
                                                 backgroundColor: Colors.red,
                                                 behavior:
                                                     SnackBarBehavior.floating,
@@ -394,7 +449,7 @@ class _DetailProfilPageState extends State<DetailProfilPage> {
                                     },
                                     icon: const Icon(Icons.save),
                                     label: const Text(
-                                      'Simpan Gaji',
+                                      'Simpan Perubahan',
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -494,6 +549,85 @@ class _DetailProfilPageState extends State<DetailProfilPage> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showPaydayPicker() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          height: 420,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                   const Text(
+                    'Pilih Tanggal Gajian',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF0E8F6A),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  )
+                ],
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 7,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                  ),
+                  itemCount: 31,
+                  itemBuilder: (context, index) {
+                    final day = index + 1;
+                    final isSelected = _tanggalGajian == day;
+                    return InkWell(
+                      onTap: () {
+                        setState(() {
+                          _tanggalGajian = day;
+                        });
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? const Color(0xFF0E8F6A)
+                              : Colors.grey[100],
+                          borderRadius: BorderRadius.circular(8),
+                          border: isSelected
+                              ? Border.all(color: const Color(0xFF0E8F6A))
+                              : null,
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          '$day',
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : Colors.black87,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

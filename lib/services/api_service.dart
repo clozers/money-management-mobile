@@ -10,23 +10,28 @@ class ApiService {
   // 🔐 LOGIN
   static Future<Map<String, dynamic>?> login(
       String email, String password) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/login'),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: {
-        'email': email,
-        'password': password,
-      },
-    );
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/login'),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'email': email,
+          'password': password,
+        },
+      );
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      print('Login error: ${response.body}');
-      return null;
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        print('Login error: ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Login exception: $e');
+      rethrow; // Rethrow so UI can handle it
     }
   }
 
@@ -102,16 +107,21 @@ class ApiService {
     }
   }
 
-  // 💰 UPDATE GAJI BULANAN
-  static Future<Map<String, dynamic>?> updateGaji(
-    String token,
-    double gajiBulanan,
-  ) async {
-    final body = jsonEncode({
-      'gaji_bulanan': gajiBulanan,
-    });
 
-    print('Update gaji request body: $body');
+
+  // 💰 UPDATE USER PROFILE (Gaji & Tanggal Gajian)
+  static Future<Map<String, dynamic>?> updateUser(
+    String token, {
+    double? gajiBulanan,
+    int? tanggalGajian,
+  }) async {
+    final Map<String, dynamic> data = {};
+    if (gajiBulanan != null) data['gaji_bulanan'] = gajiBulanan;
+    if (tanggalGajian != null) data['tanggal_gajian'] = tanggalGajian;
+
+    final body = jsonEncode(data);
+
+    print('Update user request body: $body');
 
     final response = await http.put(
       Uri.parse('$baseUrl/user'),
@@ -123,13 +133,47 @@ class ApiService {
       body: body,
     );
 
-    print('Update gaji response status: ${response.statusCode}');
-    print('Update gaji response body: ${response.body}');
+    print('Update user response status: ${response.statusCode}');
+    print('Update user response body: ${response.body}');
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      print('Update gaji error: ${response.body}');
+      print('Update user error: ${response.body}');
+      return null;
+    }
+  }
+
+  // 💰 UPDATE GAJI BULANAN (Deprecated, use updateUser)
+  static Future<Map<String, dynamic>?> updateGaji(
+    String token,
+    double gajiBulanan,
+  ) async {
+    return updateUser(token, gajiBulanan: gajiBulanan);
+  }
+
+  // 🔄 RESET GAJI (Untuk ganti bulan)
+  static Future<Map<String, dynamic>?> resetGaji(String token) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/user/reset-gaji'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      print('Reset gaji response status: ${response.statusCode}');
+      print('Reset gaji response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        print('Reset gaji error: ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Reset gaji exception: $e');
       return null;
     }
   }

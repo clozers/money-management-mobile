@@ -21,4 +21,14 @@ class LocalStorage {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
   }
+
+  static Future<void> setResetDone(String monthYear) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('last_reset', monthYear);
+  }
+
+  static Future<String?> getLastReset() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('last_reset');
+  }
 }

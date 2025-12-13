@@ -16,8 +16,10 @@ class _HomePageState extends State<HomePage> {
   double totalMinggu = 0;
   double totalGaji = 0; // Sisa gaji
   double gajiBulanan = 0; // Gaji bulanan
+  int tanggalGajian = 1; // Default tanggal 1
   List<dynamic> transaksi = [];
   bool isLoading = true;
+  bool hasResetThisMonth = false; // State untuk sembunyikan banner
 
   final currencyFormat =
       NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
@@ -31,6 +33,12 @@ class _HomePageState extends State<HomePage> {
   Future<void> loadData() async {
     token = await LocalStorage.getToken();
     userName = await LocalStorage.getName();
+    final lastReset = await LocalStorage.getLastReset();
+    final currentMonthKey = "${DateTime.now().month}-${DateTime.now().year}";
+    
+    if (lastReset == currentMonthKey) {
+      if (mounted) setState(() => hasResetThisMonth = true);
+    }
 
     if (token == null) return;
 
@@ -80,6 +88,7 @@ class _HomePageState extends State<HomePage> {
       // Data dari API /user
       gajiBulanan =
           double.tryParse(user?['gaji_bulanan'].toString() ?? "0") ?? 0;
+      tanggalGajian = int.tryParse(user?['tanggal_gajian'].toString() ?? "1") ?? 1;
       totalGaji = double.tryParse(user?['sisa_gaji'].toString() ?? "0") ?? 0;
 
       // Data dari API /pengeluaran
@@ -105,6 +114,64 @@ class _HomePageState extends State<HomePage> {
 
       isLoading = false;
     });
+  }
+
+  Future<void> _resetGaji() async {
+    if (token == null) return;
+
+    bool confirm = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Reset Saldo?'),
+        content: Text(
+            'Saldo akan di-reset menjadi ${currencyFormat.format(gajiBulanan)}.\n\nPastikan Anda benar-benar sudah gajian untuk bulan baru!'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Batal', style: TextStyle(color: Colors.grey)),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF0E8F6A),
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Ya, Reset!'),
+          ),
+        ],
+      ),
+    );
+
+    if (!confirm) return;
+
+    setState(() => isLoading = true);
+    final result = await ApiService.resetGaji(token!);
+    setState(() => isLoading = false);
+
+    if (result != null && result['success'] == true) {
+      // Simpan status bahwa bulan ini sudah reset
+      final currentMonthKey = "${DateTime.now().month}-${DateTime.now().year}";
+      await LocalStorage.setResetDone(currentMonthKey);
+      
+      setState(() {
+        hasResetThisMonth = true;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Hore! Saldo berhasil di-reset. Selamat gajian! 🥳'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      loadData();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Gagal mereset saldo. Coba lagi.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -337,6 +404,122 @@ class _HomePageState extends State<HomePage> {
                       ),
                       child: Column(
                         children: [
+                          // ================= Payday Banner (Conditional) =================
+                          // Tampilkan jika tanggal hari ini >= tanggalGajian
+                          // DAN belum reset bulan ini
+                          if (!hasResetThisMonth && 
+                              DateTime.now().day >= tanggalGajian && 
+                              DateTime.now().day <= tanggalGajian + 7) 
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(20, 30, 20, 10),
+                              child: Container(
+                                padding: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(24),
+                                  border: Border.all(
+                                      color: const Color(0xFF0E8F6A).withOpacity(0.1),
+                                      width: 1.5),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF0E8F6A).withOpacity(0.08),
+                                      blurRadius: 20,
+                                      offset: const Offset(0, 10),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  children: [
+                                    // Animated-like Icon
+                                    Container(
+                                      height: 50,
+                                      width: 50,
+                                      decoration: BoxDecoration(
+                                        gradient: const LinearGradient(
+                                          colors: [Color(0xFF0E8F6A), Color(0xFF14B885)],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ),
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: const Color(0xFF0E8F6A).withOpacity(0.3),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                        ],
+                                      ),
+                                      child: const Icon(Icons.calendar_month_rounded,
+                                          color: Colors.white, size: 26),
+                                    ),
+                                    const SizedBox(width: 16),
+
+                                    // Text Content
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: const [
+                                              Text(
+                                                'Periode Baru!',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                              SizedBox(width: 6),
+                                              Icon(Icons.stars_rounded,
+                                                  color: Colors.orange, size: 16),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            'Saatnya tutup buku dan reset budget',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color: Colors.grey[600],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    // Action Button
+                                    Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        onTap: _resetGaji,
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16, vertical: 10),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFEAFBF4),
+                                            borderRadius: BorderRadius.circular(12),
+                                            border: Border.all(
+                                                color: const Color(0xFF0E8F6A)
+                                                    .withOpacity(0.3)),
+                                          ),
+                                          child: const Text(
+                                            'Reset',
+                                            style: TextStyle(
+                                              color: Color(0xFF0E8F6A),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            
+                          const SizedBox(height: 10),
+
                           // ================= Stats Cards =================
                           Transform.translate(
                             offset: const Offset(0, -20),

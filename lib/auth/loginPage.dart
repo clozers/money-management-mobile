@@ -21,31 +21,44 @@ class _LoginPageState extends State<LoginPage> {
 
     setState(() => loading = true);
 
-    final res = await ApiService.login(
-      emailCtrl.text.trim(),
-      passCtrl.text.trim(),
-    );
+    try {
+      final res = await ApiService.login(
+        emailCtrl.text.trim(),
+        passCtrl.text.trim(),
+      );
 
-    setState(() => loading = false);
+      if (!mounted) return;
 
-    if (res != null && res['token'] != null) {
-      final token = res['token'];
-      final name =
-          res['user']?['name'] ?? 'Pengguna'; // pastikan aman dari null
+      if (res != null && res['token'] != null) {
+        final token = res['token'];
+        final name = res['user']?['name'] ?? 'Pengguna';
 
-      // Simpan ke SharedPreferences
-      await LocalStorage.saveUser(token, name);
+        await LocalStorage.saveUser(token, name);
 
-      // Pindah ke main/home page
-      Navigator.pushReplacementNamed(context, '/home');
-    } else {
+        if (!mounted) return;
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Login gagal! Periksa email & password.'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Login gagal! Periksa email & password.'),
+          content: Text('Terjadi kesalahan: $e'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
         ),
       );
+    } finally {
+      if (mounted) {
+        setState(() => loading = false);
+      }
     }
   }
 

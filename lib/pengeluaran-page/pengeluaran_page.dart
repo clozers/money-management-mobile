@@ -471,7 +471,7 @@ class _PengeluaranPageState extends State<PengeluaranPage> {
                                                 size: 24,
                                               ),
                                             ),
-                                            const SizedBox(width: 20),
+                                            const SizedBox(width: 12),
                                             // Info transaksi
                                             Expanded(
                                               child: Column(
@@ -534,15 +534,21 @@ class _PengeluaranPageState extends State<PengeluaranPage> {
                                                 ],
                                               ),
                                             ),
-                                            const SizedBox(width: 16),
+                                            const SizedBox(width: 12),
                                             // Total dengan style yang lebih clean
-                                            Text(
-                                              currencyFormat.format(total),
-                                              style: const TextStyle(
-                                                fontSize: 17,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.red,
-                                                letterSpacing: -0.1,
+                                            Flexible(
+                                              child: FittedBox(
+                                                fit: BoxFit.scaleDown,
+                                                alignment: Alignment.centerRight,
+                                                child: Text(
+                                                  currencyFormat.format(total),
+                                                  style: const TextStyle(
+                                                    fontSize: 17,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.red,
+                                                    letterSpacing: -0.1,
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ],
